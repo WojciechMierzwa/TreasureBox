@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import LoginPage from './components/LoginPage';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LoginPage from './pages/LoginPage';
+import CreateUser from './pages/CreateUser';
 
 
 
 export default function App() {
   return (
-    <LoginPage/>
+    <Router>
+    <Routes>
+       <Route path="/" element={<LoginPage />} />
+      <Route path="/CreateUser" element={<CreateUser />} />
+    </Routes>
+  </Router>
   )
 }

@@ -15,6 +15,8 @@ public class User {
 
     @Column(name = "profile_picture")
     private int profilePicture;
+    @Transient
+    private boolean requireCredentials;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -24,4 +26,6 @@ public class User {
 
     public int getProfilePicture() { return profilePicture; }
     public void setProfilePicture(int profilePicture) { this.profilePicture = profilePicture; }
+
+
 }
