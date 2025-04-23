@@ -1,5 +1,7 @@
 package com.example.treasurebox.controller;
 
+import com.example.treasurebox.dto.UserCreationRequest;
+import com.example.treasurebox.dto.LoginRequest;
 import com.example.treasurebox.model.User;
 import com.example.treasurebox.repository.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -12,9 +14,9 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "${Frontend_Address}")
+@CrossOrigin(origins = "http://localhost:3000")
+//@CrossOrigin(origins = "${Frontend_Address}")
 public class UserController {
-
 
     private final UserRepository userRepository;
 
@@ -27,28 +29,26 @@ public class UserController {
         return userRepository.findAll();
     }
 
-    @PostMapping
+    @PostMapping("/createUser")
     public ResponseEntity<?> createUser(@RequestBody UserCreationRequest request) {
-
         try {
-
-            if (userRepository.existsByName(request.getUsername())) {
+            if (userRepository.existsByName(request.getName())) {
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", false);
                 response.put("message", "Username already exists");
                 return ResponseEntity.badRequest().body(response);
             }
 
-            // Create new user
             User user = new User();
             System.out.println(request.toString());
-            user.setName(request.getUsername());
+
+            user.setName(request.getName());
+            user.setPassword(request.getPassword());
+            user.setRequireCredentials(request.isRequireCredentials());
             user.setProfilePicture((int)(Math.random() * 4) + 1);
 
-            // Save to database
             User savedUser = userRepository.save(user);
 
-            // Create response
             Map<String, Object> response = new HashMap<>();
             response.put("userId", savedUser.getId());
             response.put("success", true);
@@ -59,49 +59,30 @@ public class UserController {
         } catch (Exception e) {
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
-            response.put("message", e.getMessage());
+            response.put("message", "Error creating user: " + e.getMessage());
             return ResponseEntity.badRequest().body(response);
         }
     }
 
-    public static class UserCreationRequest {
-        private String username;
-        private String password;
-        private boolean requireCredentials;
 
-        // Getters and setters
-        public String getUsername() {
-            return username;
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestBody LoginRequest request) {
+        User user = userRepository.findByName(request.getName()).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("success", false, "message", "User not found"));
         }
-        @Override
-        public String toString() {
-            return "UserCreationRequest{" +
-                    "username='" + username + '\'' +
-                    ", password='***'" +  // or password if you really want to show it
-                    ", requireCredentials=" + requireCredentials +
-                    '}';
-        }
-
-
-        public void setUsername(String username) {
-            this.username = username;
+        System.out.print(user.getId());
+        System.out.print(user.getName());
+        System.out.print(user.getPassword());
+        if (!request.getPassword().equals(user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("success", false, "message", "Invalid password"));
         }
 
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
-
-        public boolean isRequireCredentials() {
-            return requireCredentials;
-        }
-
-        public void setRequireCredentials(boolean requireCredentials) {
-            this.requireCredentials = requireCredentials;
-        }
+        return ResponseEntity.ok(Map.of("success", true, "message", "Login successful", "userId", user.getId()));
     }
+
 
 }

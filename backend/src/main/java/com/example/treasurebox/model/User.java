@@ -1,4 +1,3 @@
-// com.example.treasurebox.model.User.java
 package com.example.treasurebox.model;
 
 import jakarta.persistence.*;
@@ -10,12 +9,11 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
-
+    private String password;
     @Column(name = "profile_picture")
     private int profilePicture;
-    @Transient
+    @Column(name = "require_credentials")
     private boolean requireCredentials;
 
     public Long getId() { return id; }
@@ -24,8 +22,12 @@ public class User {
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
     public int getProfilePicture() { return profilePicture; }
     public void setProfilePicture(int profilePicture) { this.profilePicture = profilePicture; }
 
-
+    public boolean getRequireCredentials() { return requireCredentials; }
+    public void setRequireCredentials(boolean requireCredentials) { this.requireCredentials = requireCredentials; }
 }
