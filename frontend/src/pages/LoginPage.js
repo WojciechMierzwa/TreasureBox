@@ -41,8 +41,8 @@ export default function LoginPage() {
         throw new Error(errorData.message || 'Invalid credentials');
       }
       
-      const data = await response.json();
-      navigate('/Hub'); 
+    
+      navigate('/Hub', { state: { user: user } });
       
     } catch (err) {
       console.error('Error while logging:', err);
