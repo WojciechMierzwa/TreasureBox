@@ -1,8 +1,12 @@
 import React from 'react'
+import HubNavbar from './components/HubNavbar'
 
 function Hub() {
   return (
-    <div>Hub</div>
+    <div>
+      <HubNavbar/>
+      <p>test</p>
+    </div>
   )
 }
 

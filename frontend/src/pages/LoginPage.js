@@ -61,12 +61,11 @@ export default function LoginPage() {
       <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
         <div className="flex justify-center mb-6">
         <div className="flex justify-center mb-6">
-          <img
-            src="/images/logo_placeholder.png"
-            width={100}
-            height={100}
-            alt="Logo"
-          />
+        <img
+                src={`/avatar/${user.profilePicture}.png`} 
+                alt="Profile"
+                className="w-32 h-32 rounded-full mr-4" 
+              />
         </div>
         </div>
         
@@ -84,14 +83,10 @@ export default function LoginPage() {
         
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <input
-              type="text"
-              placeholder="Login"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            />
+          <h2 class="text-center text-2xl/9 font-bold tracking-tight text-gray-900">
+          {user.name}</h2>
+          
+            
           </div>
           <div className="mb-4">
             <input
