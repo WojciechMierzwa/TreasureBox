@@ -4,6 +4,7 @@ import ProfilePage from './pages/ProfilePage';
 import CreateUser from './pages/CreateUser';
 import Hub from './pages/Hub';
 import LoginPage from './pages/LoginPage';
+import Test from './pages/Test';
 
 
 
@@ -15,6 +16,7 @@ export default function App() {
       <Route path="/CreateUser" element={<CreateUser />} />
       <Route path="/Hub" element={<Hub/>} />
       <Route path="/LoginPage" element={<LoginPage/>} />
+      <Route path="/Test" element={<Test/>} />
     </Routes>
   </Router>
   )
