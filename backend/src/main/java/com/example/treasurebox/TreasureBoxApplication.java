@@ -19,8 +19,8 @@ public class TreasureBoxApplication {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
-						.allowedOrigins("${Frontend_Address}")
-						.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+						.allowedOrigins("http://192.168.0.4:3000", "http://192.168.0.4:3000/")
+						.allowedMethods("*")
 						.allowedHeaders("*");
 			}
 		};

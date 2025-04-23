@@ -24,7 +24,7 @@ function ProfilePage() {
   }
   function hub(user) {
     if (!user.requireCredentials) {
-      navigate('/Hub'); 
+      navigate('/Hub',  { state: { user: user } }); 
     } else {
       navigate('/LoginPage', { state: { user: user } });
     }
