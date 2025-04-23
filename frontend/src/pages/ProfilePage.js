@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';  
+import { data, useNavigate } from 'react-router-dom';  
 import '../index.css';
 
 function ProfilePage() {
@@ -18,14 +18,17 @@ function ProfilePage() {
       .catch(err => console.error('Fetch error:', err));
   }, []);
   
-
+  
   function createUser() {
     navigate('/CreateUser'); 
   }
-  function hub(){
-    navigate('/Hub'); 
+  function hub(user) {
+    if (!user.requireCredentials) {
+      navigate('/Hub'); 
+    } else {
+      navigate('/LoginPage', { state: { user: user } });
+    }
   }
-
   return (
     <div className="flex justify-center items-center min-h-screen py-8">
       <div className="w-full max-w-lg">
@@ -36,7 +39,7 @@ function ProfilePage() {
               key={user.id} 
               type="button"
               className="flex items-center w-full py-3 px-6 bg-white rounded-lg border border-gray-300 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onClick={hub}
+              onClick={() => hub(user)}
             >
               <img
                 src={`/avatar/${user.profilePicture}.png`} 

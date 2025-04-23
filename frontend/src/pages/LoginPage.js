@@ -1,13 +1,17 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function LoginPage() {
-  const [name, setName] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const navigate = useNavigate();
+
+    const location = useLocation();
+    const user = location.state?.user;
+    const [name, setName] = useState(user?.name || '');
+    const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+    const navigate = useNavigate();
+    console.log(user);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,7 +42,7 @@ export default function LoginPage() {
       }
       
       const data = await response.json();
-      navigate('/'); 
+      navigate('/Hub'); 
       
     } catch (err) {
       console.error('Error while logging:', err);
