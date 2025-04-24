@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 
 @RestController
 @RequestMapping("/api/users")
@@ -19,7 +22,7 @@ import java.util.Map;
 public class UserController {
 
     private final UserRepository userRepository;
-
+    private static final Map<String, Long> sessionTokens = new ConcurrentHashMap<>();
     public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -73,16 +76,47 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("success", false, "message", "User not found"));
         }
-        System.out.print(user.getId());
-        System.out.print(user.getName());
-        System.out.print(user.getPassword());
+
         if (!request.getPassword().equals(user.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("success", false, "message", "Invalid password"));
         }
 
-        return ResponseEntity.ok(Map.of("success", true, "message", "Login successful", "userId", user.getId()));
+        // ✅ Generate and store token
+        String token = UUID.randomUUID().toString();
+        sessionTokens.put(token, user.getId());
+
+        return ResponseEntity.ok(
+                Map.of(
+                        "success", true,
+                        "message", "Login successful",
+                        "userId", user.getId(),
+                        "username", user.getName(),
+                        "token", token // ✅ Send token to frontend
+                )
+        );
+    }
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(@RequestHeader("Authorization") String token) {
+        Long userId = sessionTokens.get(token);
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("success", false, "message", "Invalid or expired token"));
+        }
+
+        return userRepository.findById(userId)
+                .map(user -> ResponseEntity.ok(Map.of(
+                        "success", true,
+                        "userId", user.getId(),
+                        "username", user.getName()
+                )))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("success", false, "message", "User not found")));
     }
 
 
+
 }
+
+
+

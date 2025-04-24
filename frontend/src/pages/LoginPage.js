@@ -26,6 +26,7 @@ export default function LoginPage() {
       const userData = {
         name: name,
         password: password,
+        test: "test"
       };
       
       const response = await fetch(apiUrl, {
@@ -35,11 +36,20 @@ export default function LoginPage() {
         },
         body: JSON.stringify(userData)
       });
+     
+      
       
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Invalid credentials');
+      } else {
+        const data = await response.json();
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userId", data.userId);
+        localStorage.setItem("username", data.username);
+        console.log(data);
       }
+      
       
     
       navigate('/Hub', { state: { user: user } });
