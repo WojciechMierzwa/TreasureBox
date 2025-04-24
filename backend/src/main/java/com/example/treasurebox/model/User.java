@@ -11,9 +11,7 @@ public class User {
     private Long id;
     private String name;
     private String password;
-    @Column(name = "profile_picture")
     private int profilePicture;
-    @Column(name = "require_credentials")
     private boolean requireCredentials;
 
     public Long getId() { return id; }
@@ -30,4 +28,8 @@ public class User {
 
     public boolean getRequireCredentials() { return requireCredentials; }
     public void setRequireCredentials(boolean requireCredentials) { this.requireCredentials = requireCredentials; }
+
+    public boolean isRequireCredentials() {
+        return requireCredentials;
+    }
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { data, useNavigate } from 'react-router-dom';  
+import { useNavigate } from 'react-router-dom';  
 import '../index.css';
 
 function ProfilePage() {
@@ -17,18 +17,22 @@ function ProfilePage() {
       })
       .catch(err => console.error('Fetch error:', err));
   }, []);
-  
-  
+
   function createUser() {
     navigate('/CreateUser'); 
   }
-  function hub(user) {
-    if (!user.requireCredentials) {
-      navigate('/Hub',  { state: { user: user } }); 
+
+  function handleUserSelection(user) {
+    // Pass `requireCredentials` to ProfilePage directly and navigate accordingly
+    if (user.requireCredentials) {
+      // User requires credentials -> navigate to LoginPage
+      navigate('/LoginPage', { state: { user: user, requireCredentials: true } });
     } else {
-      navigate('/LoginPage', { state: { user: user } });
+      // User does not require credentials -> navigate to Hub
+      navigate('/LoginPage', { state: { user: user, requireCredentials: false } });
     }
   }
+
   return (
     <div className="flex justify-center items-center min-h-screen py-8">
       <div className="w-full max-w-lg">
@@ -39,7 +43,7 @@ function ProfilePage() {
               key={user.id} 
               type="button"
               className="flex items-center w-full py-3 px-6 bg-white rounded-lg border border-gray-300 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onClick={() => hub(user)}
+              onClick={() => handleUserSelection(user)}
             >
               <img
                 src={`/avatar/${user.profilePicture}.png`} 

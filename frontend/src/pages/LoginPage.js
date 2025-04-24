@@ -2,16 +2,18 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function LoginPage() {
-
-    const location = useLocation();
-    const user = location.state?.user;
-    const [name, setName] = useState(user?.name || '');
-    const [password, setPassword] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
-    const navigate = useNavigate();
-    console.log(user);
+  const location = useLocation();
+  const user = location.state?.user; // Get user info from the passed state
+  const requireCredentials = location.state?.requireCredentials; // Get the requireCredentials flag
+  
+  const [name, setName] = useState(user?.name || '');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
+  
+  console.log(user);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,6 +28,7 @@ export default function LoginPage() {
       const userData = {
         name: name,
         password: password,
+        test: "test"
       };
       
       const response = await fetch(apiUrl, {
@@ -35,13 +38,18 @@ export default function LoginPage() {
         },
         body: JSON.stringify(userData)
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Invalid credentials');
+      } else {
+        const data = await response.json();
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userId", data.userId);
+        localStorage.setItem("username", data.username);
       }
       
-    
+      // Navigate to the Hub if login is successful
       navigate('/Hub', { state: { user: user } });
       
     } catch (err) {
@@ -53,20 +61,18 @@ export default function LoginPage() {
   };
 
   const returnToProfilePage = () => {
-    navigate('/'); 
+    navigate('/'); // Return to the profile page
   };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
       <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
         <div className="flex justify-center mb-6">
-        <div className="flex justify-center mb-6">
-        <img
-                src={`/avatar/${user.profilePicture}.png`} 
-                alt="Profile"
-                className="w-32 h-32 rounded-full mr-4" 
-              />
-        </div>
+          <img
+            src={`/avatar/${user.profilePicture}.png`} 
+            alt="Profile"
+            className="w-32 h-32 rounded-full mr-4" 
+          />
         </div>
         
         {error && (
@@ -83,21 +89,24 @@ export default function LoginPage() {
         
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-          <h2 class="text-center text-2xl/9 font-bold tracking-tight text-gray-900">
-          {user.name}</h2>
-          
-            
+            <h2 className="text-center text-2xl font-bold tracking-tight text-gray-900">
+              {user.name}
+            </h2>
           </div>
-          <div className="mb-4">
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            />
-          </div>
+
+          {/* Conditionally render the password field */}
+          {requireCredentials && (
+            <div className="mb-4">
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              />
+            </div>
+          )}
 
           <div className="space-y-3">
             <button
@@ -107,7 +116,7 @@ export default function LoginPage() {
             >
               {isLoading ? 'Accessing...' : 'Login'}
             </button>
-           
+
             <button
               type="button"
               onClick={returnToProfilePage}
