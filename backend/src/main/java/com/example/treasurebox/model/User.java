@@ -28,4 +28,8 @@ public class User {
 
     public boolean getRequireCredentials() { return requireCredentials; }
     public void setRequireCredentials(boolean requireCredentials) { this.requireCredentials = requireCredentials; }
+
+    public boolean isRequireCredentials() {
+        return requireCredentials;
+    }
 }

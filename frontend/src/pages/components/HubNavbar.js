@@ -7,6 +7,14 @@ const HubNavbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const location = useLocation();
   const user = location.state?.user;
+  const navigate = useNavigate(); 
+
+  const signOut = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("username");
+    navigate('/');
+  };
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -61,7 +69,14 @@ const HubNavbar = () => {
               <ul className="py-2">
                 <li><a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Dashboard</a></li>
                 <li><a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Settings</a></li>
-                <li><a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</a></li>
+                <li>
+                  <button
+                    onClick={signOut}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                    >
+                    Sign out
+                  </button>
+                </li>
               </ul>
             </div>
           )}
