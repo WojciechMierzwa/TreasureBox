@@ -15,6 +15,7 @@ export default function App() {
         <Route path="/" element={<ProfilePage />} />
         <Route path="/CreateUser" element={<CreateUser />} />
         <Route path="/LoginPage" element={<LoginPage />} />
+        <Route path="/Test" element={<Test />} />
 
         {/* Protected Routes */}
         <Route 
@@ -22,14 +23,6 @@ export default function App() {
           element={
             <ProtectedRoute>
               <Hub />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/Test" 
-          element={
-            <ProtectedRoute>
-              <Test />
             </ProtectedRoute>
           } 
         />
