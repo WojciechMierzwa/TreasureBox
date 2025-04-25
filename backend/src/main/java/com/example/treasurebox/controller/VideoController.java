@@ -17,7 +17,7 @@ import java.io.InputStream;
 @RequestMapping("/video")
 public class VideoController {
 
-    private final String VIDEO_PATH = "C:/Users/wojci/Videos/Nagrania ekranu/2.mp4";
+    private final String VIDEO_PATH = "D:\\song.mp4";
 
     @GetMapping
     public ResponseEntity<Resource> getVideo(@RequestHeader HttpHeaders headers) {

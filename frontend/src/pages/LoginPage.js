@@ -61,7 +61,7 @@ export default function LoginPage() {
   };
 
   const returnToProfilePage = () => {
-    navigate('/'); // Return to the profile page
+    navigate('/'); 
   };
 
   return (
@@ -94,7 +94,6 @@ export default function LoginPage() {
             </h2>
           </div>
 
-          {/* Conditionally render the password field */}
           {requireCredentials && (
             <div className="mb-4">
               <input
