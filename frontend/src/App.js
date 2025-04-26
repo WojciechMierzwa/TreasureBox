@@ -8,6 +8,7 @@ import Test from './pages/Video';
 import ProtectedRoute from './pages/components/ProtectedRoute';
 import Settings from './pages/Settings';
 import DeleteUser from './pages/User/DeleteUser';
+import Movies from './pages/Film/Movies';
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
         <Route path="/CreateUser" element={<CreateUser />} />
         <Route path="/LoginPage" element={<LoginPage />} />
         <Route path="/Test" element={<Test />} />
+        <Route path="/Movies" element={<Movies />} />
 
         {/* Protected Routes */}
         <Route 
