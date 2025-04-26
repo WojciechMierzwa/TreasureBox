@@ -1,16 +1,12 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-export default function Settings() {
+export default function DeleteUser() {
   const navigate = useNavigate();
   const location = useLocation();
 
   const [id] = useState(localStorage.getItem("userId") || '');
   const [name, setName] = useState(localStorage.getItem("username") || '');
-  const [password, setPassword] = useState('');
-  const [requireCredentials, setRequireCredentials] = useState(
-    localStorage.getItem("requireCredentials") === 'true'
-  );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -25,13 +21,10 @@ export default function Settings() {
 
     try {
       const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS;
-      const apiUrl = `${backendAddress}/api/users/updateUser`;
+      const apiUrl = `${backendAddress}/api/users/deleteUser`;
 
       const userData = {
         id:id,
-        name:name,
-        password:password,
-        requireCredentials:requireCredentials
       };
 
       const response = await fetch(apiUrl, {
@@ -53,8 +46,8 @@ export default function Settings() {
       localStorage.setItem("username", data.username);
       localStorage.setItem("profilePicture", data.profilePicture);
 
-      setSuccess('User updated successfully!');
-      navigate('/Hub');
+      setSuccess('User deleted successfully!');
+      navigate('/');
     } catch (err) {
       console.error('Error while updating:', err);
       setError(err.message || 'An error occurred while updating');
@@ -97,29 +90,6 @@ export default function Settings() {
             </h2>
           </div>
 
-          <div className="mb-4">
-            <input
-              type="password"
-              placeholder="New Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            />
-          </div>
-
-          <div className="flex items-center mb-4">
-            <input
-              type="checkbox"
-              id="require-credentials"
-              checked={requireCredentials}
-              onChange={(e) => setRequireCredentials(e.target.checked)}
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-            />
-            <label htmlFor="require-credentials" className="ml-2 block text-sm text-gray-900">
-              Require credentials when I login
-            </label>
-          </div>
 
           <div className="space-y-3">
             <button
@@ -127,7 +97,7 @@ export default function Settings() {
               disabled={isLoading}
               className={`w-full ${isLoading ? 'bg-blue-300' : 'bg-blue-500 hover:bg-blue-700'} text-white py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
             >
-              {isLoading ? 'Updating...' : 'Update'}
+              {isLoading ? 'Deleting...' : 'Delete'}
             </button>
 
             <button

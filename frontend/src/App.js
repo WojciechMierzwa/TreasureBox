@@ -7,6 +7,7 @@ import LoginPage from './pages/User/LoginPage';
 import Test from './pages/Video';
 import ProtectedRoute from './pages/components/ProtectedRoute';
 import Settings from './pages/Settings';
+import DeleteUser from './pages/User/DeleteUser';
 
 export default function App() {
   return (
@@ -32,6 +33,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <Settings />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/DeleteUser" 
+          element={
+            <ProtectedRoute>
+              <DeleteUser />
             </ProtectedRoute>
           } 
         />

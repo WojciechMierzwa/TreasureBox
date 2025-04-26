@@ -28,7 +28,7 @@ public class UserController {
 
     @GetMapping
     public List<User> getAllUsers() {
-        System.out.println(userRepository.findAll());
+
         return userRepository.findAll();
     }
 
@@ -101,6 +101,35 @@ public class UserController {
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
             response.put("message", "Error updating user: " + e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+
+    @PostMapping("/deleteUser")
+    public ResponseEntity<?> deleteUser(@RequestBody UserUpdateRequest request) {
+        try {
+            Optional<User> optionalUser = userRepository.findById(request.getId());
+            if (optionalUser.isEmpty()) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "User not found");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+
+            User user = optionalUser.get();
+            userRepository.delete(user);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "User deleted successfully");
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Error deleting user: " + e.getMessage());
             return ResponseEntity.badRequest().body(response);
         }
     }
