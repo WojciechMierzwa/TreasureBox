@@ -1,4 +1,4 @@
-package com.example.treasurebox.dto;
+package com.example.treasurebox.dto.user;
 
 public class LoginRequest {
     private String name;

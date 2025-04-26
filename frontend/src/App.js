@@ -1,11 +1,12 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import ProfilePage from './pages/ProfilePage';
-import CreateUser from './pages/CreateUser';
+import CreateUser from './pages/User/CreateUser';
 import Hub from './pages/Hub';
-import LoginPage from './pages/LoginPage';
-import Test from './pages/Test';
-import ProtectedRoute from './pages/components/ProtectedRoute'; // Import your protected route component
+import LoginPage from './pages/User/LoginPage';
+import Test from './pages/Video';
+import ProtectedRoute from './pages/components/ProtectedRoute';
+import Settings from './pages/Settings';
 
 export default function App() {
   return (
@@ -23,6 +24,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <Hub />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/Settings" 
+          element={
+            <ProtectedRoute>
+              <Settings />
             </ProtectedRoute>
           } 
         />

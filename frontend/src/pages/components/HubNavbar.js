@@ -5,8 +5,6 @@ const HubNavbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const location = useLocation();
-  const user = location.state?.user;
   const navigate = useNavigate(); 
 
   const signOut = () => {
@@ -15,6 +13,10 @@ const HubNavbar = () => {
     localStorage.removeItem("username");
     navigate('/');
   };
+
+  const goToSettings = () => {
+    navigate('/Settings');
+  }
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -54,7 +56,7 @@ const HubNavbar = () => {
             <span className="sr-only">Open user menu</span>
             <img
               className="w-8 h-8 rounded-full"
-              src={`/avatar/${user.profilePicture}.png`} 
+              src={`/avatar/${localStorage.getItem("profilePicture")}.png`} 
               alt="user avatar"
             />
           </button>
@@ -64,11 +66,16 @@ const HubNavbar = () => {
           {dropdownOpen && (
             <div className="z-50 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-gray-700 dark:divide-gray-600 absolute right-0 top-10">
               <div className="px-4 py-3">
-                <span className="block text-sm text-gray-900 dark:text-white">{user.name}</span>
+                <span className="block text-sm text-gray-900 dark:text-white">{localStorage.getItem("username")}</span>
               </div>
               <ul className="py-2">
                 <li><a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Dashboard</a></li>
-                <li><a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Settings</a></li>
+                <li><button
+                    onClick={goToSettings}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                    >
+                    Settings
+                  </button></li>
                 <li>
                   <button
                     onClick={signOut}
