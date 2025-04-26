@@ -47,10 +47,10 @@ export default function LoginPage() {
         localStorage.setItem("token", data.token);
         localStorage.setItem("userId", data.userId);
         localStorage.setItem("username", data.username);
+        localStorage.setItem("profilePicture", data.profilePicture);
       }
-      
-      // Navigate to the Hub if login is successful
-      navigate('/Hub', { state: { user: user } });
+  
+      navigate('/Hub');
       
     } catch (err) {
       console.error('Error while logging:', err);

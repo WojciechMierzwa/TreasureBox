@@ -3,7 +3,7 @@ import ReactPlayer from 'react-player';
 import { Volume2, VolumeX, Play, Pause, SkipForward, SkipBack, Maximize } from 'lucide-react';
 import HubNavbar from './components/HubNavbar'
 
-function Test() {
+function Video() {
   const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS;
   const apiUrl = `${backendAddress}/video`;
   
@@ -236,4 +236,4 @@ function Test() {
   );
 }
 
-export default Test;
+export default Video;

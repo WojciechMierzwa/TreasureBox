@@ -1,11 +1,14 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import ProfilePage from './pages/ProfilePage';
-import CreateUser from './pages/CreateUser';
+import CreateUser from './pages/User/CreateUser';
 import Hub from './pages/Hub';
-import LoginPage from './pages/LoginPage';
-import Test from './pages/Test';
-import ProtectedRoute from './pages/components/ProtectedRoute'; // Import your protected route component
+import LoginPage from './pages/User/LoginPage';
+import Test from './pages/Video';
+import ProtectedRoute from './pages/components/ProtectedRoute';
+import Settings from './pages/Settings';
+import DeleteUser from './pages/User/DeleteUser';
+import Movies from './pages/Film/Movies';
 
 export default function App() {
   return (
@@ -16,6 +19,7 @@ export default function App() {
         <Route path="/CreateUser" element={<CreateUser />} />
         <Route path="/LoginPage" element={<LoginPage />} />
         <Route path="/Test" element={<Test />} />
+        <Route path="/Movies" element={<Movies />} />
 
         {/* Protected Routes */}
         <Route 
@@ -23,6 +27,22 @@ export default function App() {
           element={
             <ProtectedRoute>
               <Hub />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/Settings" 
+          element={
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/DeleteUser" 
+          element={
+            <ProtectedRoute>
+              <DeleteUser />
             </ProtectedRoute>
           } 
         />

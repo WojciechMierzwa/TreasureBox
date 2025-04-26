@@ -3,7 +3,7 @@ package com.example.treasurebox.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "app_user")
+@Table(name = "appuser")
 public class User {
 
     @Id

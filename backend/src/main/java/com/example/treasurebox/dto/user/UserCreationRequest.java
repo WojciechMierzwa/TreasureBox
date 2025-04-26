@@ -1,4 +1,4 @@
-package com.example.treasurebox.dto;
+package com.example.treasurebox.dto.user;
 
 public class UserCreationRequest {
     private String name;  // changed from username to name
