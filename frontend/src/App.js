@@ -9,6 +9,7 @@ import ProtectedRoute from './pages/components/ProtectedRoute';
 import Settings from './pages/Settings';
 import DeleteUser from './pages/User/DeleteUser';
 import Movies from './pages/Film/Movies';
+import MovieDetail from './pages/Film/MovieDetails';
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
         <Route path="/LoginPage" element={<LoginPage />} />
         <Route path="/Test" element={<Test />} />
         <Route path="/Movies" element={<Movies />} />
+        <Route path="/Movies/:id" element={<MovieDetail />} />
 
         {/* Protected Routes */}
         <Route 
