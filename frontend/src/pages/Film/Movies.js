@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';  
+import HubNavbar from '../components/HubNavbar';
 
 
 function Movies() {
@@ -19,6 +20,7 @@ function Movies() {
   }, []);
 
   return (
+
     <div className="flex flex-col justify-center items-center min-h-screen py-8 space-y-4">
       {movies.map(film => (
         <div 
@@ -32,6 +34,7 @@ function Movies() {
         </div>
       ))}
     </div>
+  
   );
 }
 
