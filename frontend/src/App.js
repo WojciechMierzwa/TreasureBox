@@ -9,9 +9,11 @@ import ProtectedRoute from './pages/components/ProtectedRoute';
 import Settings from './pages/submenu/Settings';
 import Movies from './pages/Film/Movies';
 import MovieDetail from './pages/Film/MovieDetails';
-import Test from './pages/Film/Test';
+import MyList from './pages/Film/MyList';
 import UserFilmList from './pages/Film/UserFilmList';
 import HubNavbar from './pages/components/HubNavbar';
+import CreateFilm from './pages/Film/CreateFilm';
+import UpdateFilm from './pages/Film/UpdateFilm';
 
 function AppContent() {
   const location = useLocation();
@@ -24,12 +26,15 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<ProfilePage />} />
         <Route path="/CreateUser" element={<CreateUser />} />
+        <Route path="/CreateFilm" element={<CreateFilm />} />
         <Route path="/LoginPage" element={<LoginPage />} />
         <Route path="/Video" element={<Video />} />
         <Route path="/Movies" element={<Movies />} />
         <Route path="/Movies/:id" element={<MovieDetail />} />
-        <Route path="/Test/:id" element={<Test />} />
+        <Route path="/MyList/:id" element={<MyList />} />
         <Route path="/user-films" element={<UserFilmList />} />
+        <Route path="/update-film/:id" element={<UpdateFilm />} />
+
 
         {/* Protected Routes */}
         <Route
