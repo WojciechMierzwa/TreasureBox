@@ -16,6 +16,7 @@ import CreateFilm from './pages/Film/CreateFilm';
 import UpdateFilm from './pages/Film/UpdateFilm';
 import TVShow from './pages/TVShow/TVShow';
 import TVShowDetails from './pages/TVShow/TVShowDetails';
+import TVSeries from './pages/TVShow/TVSeries'
 
 
 function AppContent() {
@@ -27,6 +28,7 @@ function AppContent() {
       {!excludedPaths.includes(location.pathname) && <HubNavbar />}
 
       <Routes>
+      <Route path="/TVSeries" element={<TVSeries />} />
         <Route path="/" element={<ProfilePage />} />
         <Route path="/CreateUser" element={<CreateUser />} />
         <Route path="/CreateFilm" element={<CreateFilm />} />

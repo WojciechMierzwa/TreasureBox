@@ -23,11 +23,13 @@ public class FilmController {
         this.filmRepository = filmRepository;
     }
 
-    @GetMapping
-    public List<Film> getAllFilms() {
 
-        return filmRepository.findAll();
+    @GetMapping
+    public List<Film> getFilteredFilms(@RequestParam(required = false) String genre,
+                                       @RequestParam(required = false) String mediaType) {
+        return filmRepository.findByGenreAndMediaType(genre, mediaType);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Film> getFilmById(@PathVariable Long id) {

@@ -3,14 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import HubNavbar from '../components/HubNavbar';
 
 
-function Movies() {
+function TVSeries() {
   const [movies, setMovies] = useState([]);
   const navigate = useNavigate(); 
 
   useEffect(() => {
     const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS;
   
-    fetch(`${backendAddress}/api/films?mediaType=Movie`)
+    fetch(`${backendAddress}/api/films?mediaType=Series`)
       .then(res => res.json())
       .then(data => {
         console.log("Fetched films:", data); 
@@ -38,4 +38,4 @@ function Movies() {
   );
 }
 
-export default Movies;
+export default TVSeries;
