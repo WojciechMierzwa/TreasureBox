@@ -14,6 +14,9 @@ import UserFilmList from './pages/Film/UserFilmList';
 import HubNavbar from './pages/components/HubNavbar';
 import CreateFilm from './pages/Film/CreateFilm';
 import UpdateFilm from './pages/Film/UpdateFilm';
+import TVShow from './pages/TVShow/TVShow';
+import TVShowDetails from './pages/TVShow/TVShowDetails';
+
 
 function AppContent() {
   const location = useLocation();
@@ -34,6 +37,8 @@ function AppContent() {
         <Route path="/MyList/:id" element={<MyList />} />
         <Route path="/user-films" element={<UserFilmList />} />
         <Route path="/update-film/:id" element={<UpdateFilm />} />
+        <Route path="/TVShows" element={<TVShow />} />
+        <Route path="/TVShows/:id" element={<TVShowDetails />} />
 
 
         {/* Protected Routes */}
