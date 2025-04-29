@@ -1,12 +1,21 @@
 import { useState, useRef, useEffect } from 'react';
 import ReactPlayer from 'react-player';
 import { Volume2, VolumeX, Play, Pause, SkipForward, SkipBack, Maximize } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 
-function Video({ filmLocation }) {
+function Video() {
+  const [searchParams] = useSearchParams();
+  const id = searchParams.get('id');
+
   const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS;
+  const apiUrl = `${backendAddress}/video/video?id=${id}`;
 
-  const encodedPath = encodeURIComponent(filmLocation);  
-  const apiUrl = `${backendAddress}/video?path=${encodedPath}`;
+
+  //const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS;
+
+  //const encodedPath = encodeURIComponent(filmLocation);  
+  //const apiUrl = `${backendAddress}/video?path=${encodedPath}`;
+  //const apiUrl = `${backendAddress}/video/video?id=${id}`;
 
   
   const [playing, setPlaying] = useState(false);

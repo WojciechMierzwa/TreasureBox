@@ -11,7 +11,7 @@ function MovieDetail() {
   useEffect(() => {
     const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS;
     
-    fetch(`${backendAddress}/api/films/${id}`)
+    fetch(`${backendAddress}/api/video/${id}`)
       .then(res => res.json())
       .then(data => setMovie(data))
       .catch(err => console.error('Fetch error:', err));
@@ -25,7 +25,7 @@ function MovieDetail() {
       method: 'DELETE',
     })
       .then(() => {
-        navigate('/Movies'); // go back to movies list
+        navigate('/Movies'); 
       })
       .catch(err => console.error('Delete error:', err));
   };
@@ -47,7 +47,7 @@ function MovieDetail() {
       <p className="text-gray-700">{movie.captionsLocation}</p>
       <p className="text-gray-700">{movie.mediaType}</p>
       <p className="text-gray-700">{movie.genre}</p>
-      <Video filmLocation={movie.filmLocation} />
+      <Video id={movie.id} />
       <button
         onClick={deleteMovie} className="w-full bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
             

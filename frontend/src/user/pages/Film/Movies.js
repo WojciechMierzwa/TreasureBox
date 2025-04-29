@@ -18,8 +18,7 @@ function Movies() {
   }, []);
 
   const handleMovieClick = (id) => {
-    // Passing the movie id as a filmLocation (part of the URL)
-    navigate(`/Movies/${id}?filmLocation=${id}`);
+    navigate(`/video?id=${id}`);
   };
 
   return (
@@ -28,10 +27,10 @@ function Movies() {
         <div 
           key={film.id} 
           className="p-4 bg-white shadow-md rounded-lg w-80 cursor-pointer hover:bg-gray-100"
-          onClick={() => handleMovieClick(film.id)}  // Pass id as the filmLocation
+          onClick={() => handleMovieClick(film.id)} 
         >
-          
-          <p className="text-gray-600">{film.filmLocation}</p>  
+          <p className="text-gray-600">{film.name}</p>  
+          <p className="text-gray-600">{film.genre}</p>  
         </div>
       ))}
     </div>

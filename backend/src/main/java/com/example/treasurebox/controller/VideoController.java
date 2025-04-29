@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -19,10 +20,23 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/video")
 public class VideoController {
+    private final FilmRepository filmRepository;
+    @Autowired
+    public VideoController(FilmRepository filmRepository) {
+        this.filmRepository = filmRepository;
+    }
 
-    @GetMapping
-    public ResponseEntity<Resource> getVideo(@RequestParam String path, @RequestHeader HttpHeaders headers) {
-        String decodedPath = java.net.URLDecoder.decode(path, StandardCharsets.UTF_8);
+    @GetMapping("/video")
+    public ResponseEntity<Resource> getVideo(@RequestParam Long id, @RequestHeader HttpHeaders headers) {
+        Optional<Film> filmOptional = filmRepository.findById(id);
+
+
+        if (filmOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        String decodedPath = java.net.URLDecoder.decode(filmOptional.get().getFilmLocation(), StandardCharsets.UTF_8);
+        System.out.println(decodedPath);
         File videoFile = new File(decodedPath);
 
         if (!videoFile.exists()) {
@@ -68,7 +82,7 @@ public class VideoController {
             responseHeaders.set(HttpHeaders.CONTENT_RANGE, String.format("bytes %d-%d/%d", start, end, fileLength));
 
             InputStream inputStream = new FileInputStream(videoFile);
-            inputStream.skip(start); // <-- ✅ Proper skipping
+            inputStream.skip(start);
 
             return ResponseEntity.status(range != null ? HttpStatus.PARTIAL_CONTENT : HttpStatus.OK)
                     .headers(responseHeaders)
@@ -79,6 +93,7 @@ public class VideoController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 
 
 
