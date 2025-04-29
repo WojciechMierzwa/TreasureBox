@@ -47,7 +47,7 @@ function SeriesManager() {
 
   // Poprawione przekierowanie do zarządzania odcinkami
   const viewEpisodes = (id) => {
-    navigate(`/TVSerieManager/${id}`);
+    navigate(`/SeriesManager/${id}`);
   };
 
   return (

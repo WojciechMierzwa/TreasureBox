@@ -45,7 +45,7 @@ function AppContent() {
         <Route path="/TVSeries/:tvShowId" element={<EpisodeList />} />
 
         {/* Manage Episodes */}
-        <Route path="/ManageEpisodes/:id" element={<TVSerieManager />} />  {/* This will render ManageEpisodes (TVSerieManager) */}
+        <Route path="/SeriesManager/:id" element={<TVSerieManager />} /> 
         
         {/* Admin Routes */}
         <Route path="/MoviesManager" element={<MovieManager />} />
