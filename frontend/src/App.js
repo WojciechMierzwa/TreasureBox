@@ -1,52 +1,63 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import ProfilePage from './pages/ProfilePage';
 import CreateUser from './pages/User/CreateUser';
 import Hub from './pages/Hub';
 import LoginPage from './pages/User/LoginPage';
-import Test from './pages/Video';
+import Video from './pages/Video';
 import ProtectedRoute from './pages/components/ProtectedRoute';
-import Settings from './pages/Settings';
-import DeleteUser from './pages/User/DeleteUser';
+import Settings from './pages/submenu/Settings';
 import Movies from './pages/Film/Movies';
+import MovieDetail from './pages/Film/MovieDetails';
+import Test from './pages/Film/Test';
+import UserFilmList from './pages/Film/UserFilmList';
+import HubNavbar from './pages/components/HubNavbar';
 
-export default function App() {
+function AppContent() {
+  const location = useLocation();
+  const excludedPaths = ["/", "/CreateUser", "/LoginPage"];
+
   return (
-    <Router>
+    <>
+      {!excludedPaths.includes(location.pathname) && <HubNavbar />}
+
       <Routes>
-        {/* Public Routes */}
         <Route path="/" element={<ProfilePage />} />
         <Route path="/CreateUser" element={<CreateUser />} />
         <Route path="/LoginPage" element={<LoginPage />} />
-        <Route path="/Test" element={<Test />} />
+        <Route path="/Video" element={<Video />} />
         <Route path="/Movies" element={<Movies />} />
+        <Route path="/Movies/:id" element={<MovieDetail />} />
+        <Route path="/Test/:id" element={<Test />} />
+        <Route path="/user-films" element={<UserFilmList />} />
 
         {/* Protected Routes */}
-        <Route 
-          path="/Hub" 
+        <Route
+          path="/Hub"
           element={
             <ProtectedRoute>
               <Hub />
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/Settings" 
+        <Route
+          path="/Settings"
           element={
             <ProtectedRoute>
               <Settings />
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/DeleteUser" 
-          element={
-            <ProtectedRoute>
-              <DeleteUser />
-            </ProtectedRoute>
-          } 
-        />
+        
       </Routes>
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }

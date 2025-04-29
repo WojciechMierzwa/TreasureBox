@@ -1,7 +1,9 @@
 package com.example.treasurebox.controller;
 
 
+import com.example.treasurebox.dto.user.UserUpdateRequest;
 import com.example.treasurebox.model.Film;
+import com.example.treasurebox.model.User;
 import com.example.treasurebox.repository.FilmRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,5 +30,23 @@ public class FilmController {
 
         return filmRepository.findAll();
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Film> getFilmById(@PathVariable Long id) {
+        Optional<Film> film = filmRepository.findById(id);
+        return film.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteFilmById(@PathVariable Long id) {
+        if (!filmRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        filmRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
 
 }

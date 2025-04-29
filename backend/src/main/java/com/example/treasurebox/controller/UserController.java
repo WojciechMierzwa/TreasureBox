@@ -5,7 +5,9 @@ import com.example.treasurebox.dto.user.UserCreationRequest;
 import com.example.treasurebox.dto.user.LoginRequest;
 import com.example.treasurebox.dto.user.UserUpdateRequest;
 import com.example.treasurebox.model.User;
+import com.example.treasurebox.model.UserFilm;
 import com.example.treasurebox.repository.UserRepository;
+import com.example.treasurebox.repository.UserFilmRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,9 +23,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class UserController {
 
     private final UserRepository userRepository;
+    private final UserFilmRepository userFilmRepository;
     private static final Map<String, Long> sessionTokens = new ConcurrentHashMap<>();
-    public UserController(UserRepository userRepository) {
+
+    
+    public UserController(UserRepository userRepository, UserFilmRepository userFilmRepository) {
         this.userRepository = userRepository;
+        this.userFilmRepository = userFilmRepository;
     }
 
     @GetMapping
@@ -109,6 +115,7 @@ public class UserController {
     @PostMapping("/deleteUser")
     public ResponseEntity<?> deleteUser(@RequestBody UserUpdateRequest request) {
         try {
+            // Szukamy użytkownika po ID
             Optional<User> optionalUser = userRepository.findById(request.getId());
             if (optionalUser.isEmpty()) {
                 Map<String, Object> response = new HashMap<>();
@@ -118,8 +125,17 @@ public class UserController {
             }
 
             User user = optionalUser.get();
+
+            // Usuwamy powiązane rekordy z tabeli UserFilm
+            List<UserFilm> userFilms = userFilmRepository.findByUserId(user.getId()); // Pobieramy rekordy powiązane z użytkownikiem
+            for (UserFilm userFilm : userFilms) {
+                userFilmRepository.delete(userFilm); // Usuwamy każdy powiązany rekord
+            }
+
+            // Usuwamy użytkownika
             userRepository.delete(user);
 
+            // Odpowiedź sukcesu
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("message", "User deleted successfully");
@@ -127,12 +143,15 @@ public class UserController {
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
+            // Obsługa błędów
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
             response.put("message", "Error deleting user: " + e.getMessage());
             return ResponseEntity.badRequest().body(response);
         }
     }
+
+
 
 
     @PostMapping("/login")

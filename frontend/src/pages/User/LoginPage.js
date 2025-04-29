@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
+
 export default function LoginPage() {
   const location = useLocation();
   const user = location.state?.user; // Get user info from the passed state
