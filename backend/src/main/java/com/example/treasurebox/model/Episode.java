@@ -1,11 +1,12 @@
 package com.example.treasurebox.model;
 
-import com.example.treasurebox.repository.TVShowRepository;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "episode")
 public class Episode {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,10 +32,12 @@ public class Episode {
     @Column(name = "captions_location")
     private String captionsLocation;
 
-    @ManyToOne
-    @JoinColumn(name = "tvshow_id", referencedColumnName = "id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tvshow_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private TVShow tvShow;
 
+    // Gettery i settery
     public Long getId() {
         return id;
     }
@@ -43,52 +46,12 @@ public class Episode {
         this.id = id;
     }
 
-    public TVShow getTvShow() {
-        return tvShow;
+    public int getSeasonNumber() {
+        return seasonNumber;
     }
 
-    public void setTvShow(TVShow tvShow) {
-        this.tvShow = tvShow;
-    }
-
-    public String getCaptionsLocation() {
-        return captionsLocation;
-    }
-
-    public void setCaptionsLocation(String captionsLocation) {
-        this.captionsLocation = captionsLocation;
-    }
-
-    public boolean isHasCaptions() {
-        return hasCaptions;
-    }
-
-    public void setHasCaptions(boolean hasCaptions) {
-        this.hasCaptions = hasCaptions;
-    }
-
-    public String getEpisodeLocation() {
-        return episodeLocation;
-    }
-
-    public void setEpisodeLocation(String episodeLocation) {
-        this.episodeLocation = episodeLocation;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setSeasonNumber(int seasonNumber) {
+        this.seasonNumber = seasonNumber;
     }
 
     public int getEpisodeNumber() {
@@ -99,11 +62,51 @@ public class Episode {
         this.episodeNumber = episodeNumber;
     }
 
-    public int getSeasonNumber() {
-        return seasonNumber;
+    public String getName() {
+        return name;
     }
 
-    public void setSeasonNumber(int seasonNumber) {
-        this.seasonNumber = seasonNumber;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public String getEpisodeLocation() {
+        return episodeLocation;
+    }
+
+    public void setEpisodeLocation(String episodeLocation) {
+        this.episodeLocation = episodeLocation;
+    }
+
+    public boolean isHasCaptions() {
+        return hasCaptions;
+    }
+
+    public void setHasCaptions(boolean hasCaptions) {
+        this.hasCaptions = hasCaptions;
+    }
+
+    public String getCaptionsLocation() {
+        return captionsLocation;
+    }
+
+    public void setCaptionsLocation(String captionsLocation) {
+        this.captionsLocation = captionsLocation;
+    }
+
+    public TVShow getTvShow() {
+        return tvShow;
+    }
+
+    public void setTvShow(TVShow tvShow) {
+        this.tvShow = tvShow;
     }
 }

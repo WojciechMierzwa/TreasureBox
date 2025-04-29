@@ -1,8 +1,10 @@
 package com.example.treasurebox.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table(name = "tvshow")
 public class TVShow {
 

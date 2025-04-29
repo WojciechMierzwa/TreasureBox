@@ -16,7 +16,8 @@ import CreateFilm from './pages/Film/CreateFilm';
 import UpdateFilm from './pages/Film/UpdateFilm';
 import TVShow from './pages/TVShow/TVShow';
 import TVShowDetails from './pages/TVShow/TVShowDetails';
-import TVSeries from './pages/TVShow/TVSeries'
+import TVSeries from './pages/TVShow/TVSeries';
+import EpisodeList from './pages/Episode/EpisodeList';
 
 
 function AppContent() {
@@ -41,8 +42,8 @@ function AppContent() {
         <Route path="/update-film/:id" element={<UpdateFilm />} />
         <Route path="/TVShows" element={<TVShow />} />
         <Route path="/TVShows/:id" element={<TVShowDetails />} />
-
-
+        <Route path="/EpisodeList" element={<EpisodeList />} />
+        <Route path="/EpisodeList/:tvShowId" element={<EpisodeList />} />
         {/* Protected Routes */}
         <Route
           path="/Hub"
