@@ -4,6 +4,8 @@ package com.example.treasurebox.controller;
 import com.example.treasurebox.dto.film.FilmCreateRequest;
 import com.example.treasurebox.model.Film;
 import com.example.treasurebox.repository.FilmRepository;
+import com.example.treasurebox.repository.UserFilmRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +20,11 @@ import java.util.*;
 public class FilmController {
 
     private final FilmRepository filmRepository;
+    private UserFilmRepository userFilmRepository;
 
-    public FilmController(FilmRepository filmRepository) {
+    public FilmController(FilmRepository filmRepository, UserFilmRepository userFilmRepository) {
         this.filmRepository = filmRepository;
+        this.userFilmRepository = userFilmRepository;
     }
 
 
@@ -39,13 +43,18 @@ public class FilmController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteFilmById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteFilmById(@PathVariable("id") Long id) {
+        System.out.println("test usuniecia");
+
         if (!filmRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
+        userFilmRepository.deleteByFilmId(id);
         filmRepository.deleteById(id);
+
         return ResponseEntity.noContent().build();
     }
+
 
     @PostMapping
     public ResponseEntity<Film> createFilm(@RequestBody FilmCreateRequest request) {
