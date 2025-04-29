@@ -1,5 +1,5 @@
 import React from 'react'
-import EditUser from '../User/EditUser'
+import EditUser from './EditUser'
 
 function Settings() {
   return (

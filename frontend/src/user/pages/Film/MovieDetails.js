@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
+import Video from '../Video';
 
 function MovieDetail() {
   const { id } = useParams();
@@ -46,6 +47,7 @@ function MovieDetail() {
       <p className="text-gray-700">{movie.captionsLocation}</p>
       <p className="text-gray-700">{movie.mediaType}</p>
       <p className="text-gray-700">{movie.genre}</p>
+      <Video filmLocation={movie.filmLocation} />
       <button
         onClick={deleteMovie} className="w-full bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
             

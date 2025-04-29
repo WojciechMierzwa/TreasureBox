@@ -1,23 +1,25 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
-import ProfilePage from './pages/ProfilePage';
-import CreateUser from './pages/User/CreateUser';
-import Hub from './pages/Hub';
-import LoginPage from './pages/User/LoginPage';
-import Video from './pages/Video';
-import ProtectedRoute from './pages/components/ProtectedRoute';
-import Settings from './pages/submenu/Settings';
-import Movies from './pages/Film/Movies';
-import MovieDetail from './pages/Film/MovieDetails';
-import MyList from './pages/Film/MyList';
-import UserFilmList from './pages/Film/UserFilmList';
-import HubNavbar from './pages/components/HubNavbar';
-import CreateFilm from './pages/Film/CreateFilm';
-import UpdateFilm from './pages/Film/UpdateFilm';
-import TVShow from './pages/TVShow/TVShow';
-import TVShowDetails from './pages/TVShow/TVShowDetails';
-import TVSeries from './pages/TVShow/TVSeries';
-import EpisodeList from './pages/Episode/EpisodeList';
+import ProfilePage from './login/ProfilePage';
+import CreateUser from './login/CreateUser';
+import Hub from './user/pages/Hub';
+import LoginPage from './login/LoginPage';
+import Video from './user/pages/Video';
+import ProtectedRoute from './components/ProtectedRoute';
+import Settings from './user/pages/manageAccount/Settings';
+import Movies from './user/pages/Film/Movies';
+import MovieDetail from './user/pages/Film/MovieDetails';
+import MyList from './user/pages/Film/MyList';
+import UserFilmList from './user/pages/Film/UserFilmList';
+import HubNavbar from './components/HubNavbar';
+import CreateFilm from './user/pages/Film/CreateFilm';
+import UpdateFilm from './user/pages/Film/UpdateFilm';
+import TVShow from './user/pages/TVShow/TVShow';
+import TVShowDetails from './user/pages/TVShow/TVShowDetails';
+import TVSeries from './user/pages/TVShow/TVSeries';
+import EpisodeList from './user/pages/Episode/EpisodeList';
+import Manager from './admin/Manager';
+import VideoStreamer from './VideoStreamer';
 
 
 function AppContent() {
@@ -40,10 +42,8 @@ function AppContent() {
         <Route path="/MyList/:id" element={<MyList />} />
         <Route path="/user-films" element={<UserFilmList />} />
         <Route path="/update-film/:id" element={<UpdateFilm />} />
-        <Route path="/TVShows" element={<TVShow />} />
-        <Route path="/TVShows/:id" element={<TVShowDetails />} />
-        <Route path="/EpisodeList" element={<EpisodeList />} />
-        <Route path="/EpisodeList/:tvShowId" element={<EpisodeList />} />
+        <Route path="/TVSeries/:tvShowId" element={<EpisodeList />} />
+        <Route path="/Test" element={<VideoStreamer />} />
         {/* Protected Routes */}
         <Route
           path="/Hub"
@@ -58,6 +58,14 @@ function AppContent() {
           element={
             <ProtectedRoute>
               <Settings />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/Manager"
+          element={
+            <ProtectedRoute>
+              <Manager />
             </ProtectedRoute>
           }
         />

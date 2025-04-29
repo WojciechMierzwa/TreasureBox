@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';  
-import HubNavbar from '../components/HubNavbar';
 
 
 function TVSeries() {
@@ -26,7 +25,7 @@ function TVSeries() {
         <div 
           key={film.id} 
           className="p-4 bg-white shadow-md rounded-lg w-80 cursor-pointer hover:bg-gray-100"
-          onClick={() => navigate(`/Movies/${film.id}`)} 
+          onClick={() => navigate(`/TVSeries/${film.id}`)} 
         >
           <h2 className="text-xl font-bold mb-2">{film.name}</h2>
           <h3 className="text-gray-600">{film.genre}</h3> 

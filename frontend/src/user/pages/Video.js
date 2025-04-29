@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import ReactPlayer from 'react-player';
 import { Volume2, VolumeX, Play, Pause, SkipForward, SkipBack, Maximize } from 'lucide-react';
-import HubNavbar from './components/HubNavbar'
 
-function Video() {
+function Video({ filmLocation }) {
   const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS;
-  const apiUrl = `${backendAddress}/video`;
+
+  const encodedPath = encodeURIComponent(filmLocation);  
+  const apiUrl = `${backendAddress}/video?path=${encodedPath}`;
+
   
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -17,7 +19,6 @@ function Video() {
   const hideVolumeSliderTimeout = useRef(null);
   const [showControls, setShowControls] = useState(true);
   const idleTimeout = useRef(null);
-
 
   useEffect(() => {
     const resetIdleTimer = () => {
@@ -138,13 +139,9 @@ function Video() {
         onDuration={handleDuration}
       />
       
-    
       <div className={`absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 p-4 transition-opacity duration-300 ${showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-
         <div className="flex items-center justify-between">
-          
           <div className="flex-grow">
-            {/* Gold progress bar */}
             <div 
               className="h-2 bg-gray-200 rounded-full cursor-pointer relative"
               onClick={handleSeek}
@@ -183,46 +180,44 @@ function Video() {
           </button>
           
           <div className="ml-auto flex items-center">
-          <div
-  className="relative flex flex-col items-center"
-  onMouseEnter={() => {
-    clearTimeout(hideVolumeSliderTimeout.current);
-    setShowVolumeSlider(true);
-  }}
-  onMouseLeave={() => {
-    hideVolumeSliderTimeout.current = setTimeout(() => {
-      setShowVolumeSlider(false);
-    }, 500);
-  }}
->
-
-
-  {showVolumeSlider && (
-    <div className="absolute bottom-full mb-2 bg-black bg-opacity-80 p-2 rounded-lg">
-      <div className="h-24 flex items-center justify-center w-4">
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          value={muted ? 0 : volume}
-          onChange={handleVolumeChange}
-          className="h-2 w-24 bg-gray-200 rounded-full appearance-none cursor-pointer"
-          style={{
-            transform: 'rotate(-90deg)',
-            background: `linear-gradient(to right, #EAB308 0%, #EAB308 ${(muted ? 0 : volume) * 100}%, #E5E7EB ${(muted ? 0 : volume) * 100}%, #E5E7EB 100%)`
-          }}
-        />
-      </div>
-    </div>
-  )}
-  <button 
-    onClick={toggleMute}
-    className="text-white hover:text-gray-300 mx-10 "
-  >
-    {muted || volume === 0 ? <VolumeX size={36} /> : <Volume2 size={36} />}
-  </button>
-</div>
+            <div
+              className="relative flex flex-col items-center"
+              onMouseEnter={() => {
+                clearTimeout(hideVolumeSliderTimeout.current);
+                setShowVolumeSlider(true);
+              }}
+              onMouseLeave={() => {
+                hideVolumeSliderTimeout.current = setTimeout(() => {
+                  setShowVolumeSlider(false);
+                }, 500);
+              }}
+            >
+              {showVolumeSlider && (
+                <div className="absolute bottom-full mb-2 bg-black bg-opacity-80 p-2 rounded-lg">
+                  <div className="h-24 flex items-center justify-center w-4">
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.01"
+                      value={muted ? 0 : volume}
+                      onChange={handleVolumeChange}
+                      className="h-2 w-24 bg-gray-200 rounded-full appearance-none cursor-pointer"
+                      style={{
+                        transform: 'rotate(-90deg)',
+                        background: `linear-gradient(to right, #EAB308 0%, #EAB308 ${(muted ? 0 : volume) * 100}%, #E5E7EB ${(muted ? 0 : volume) * 100}%, #E5E7EB 100%)`
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+              <button 
+                onClick={toggleMute}
+                className="text-white hover:text-gray-300 mx-10 "
+              >
+                {muted || volume === 0 ? <VolumeX size={36} /> : <Volume2 size={36} />}
+              </button>
+            </div>
             <button 
               onClick={handleFullscreen}
               className="text-white hover:text-gray-300 mr-4"

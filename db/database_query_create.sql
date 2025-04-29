@@ -7,6 +7,7 @@ DROP TABLE IF EXISTS Film;
 CREATE TABLE AppUser
     (
      id SERIAL PRIMARY KEY,
+	 role TEXT DEFAULT 'user' NOT NULL,
      name TEXT NOT NULL, 
      password TEXT NOT NULL, 
      profile_picture INTEGER NOT NULL,   
