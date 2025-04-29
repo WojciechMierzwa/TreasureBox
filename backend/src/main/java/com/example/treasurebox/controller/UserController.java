@@ -50,11 +50,11 @@ public class UserController {
 
             User user = new User();
             System.out.println(request.toString());
-
             user.setName(request.getName());
             user.setPassword(request.getPassword());
             user.setRequireCredentials(request.isRequireCredentials());
             user.setProfilePicture((int)(Math.random() * 4) + 1);
+            user.setRole("user");
 
             User savedUser = userRepository.save(user);
 
@@ -179,6 +179,7 @@ public class UserController {
                 "message", "Login successful",
                 "userId", user.getId(),
                 "username", user.getName(),
+                "role", user.getRole(),
                 "profilePicture", user.getProfilePicture(),
                 "requireCredentials", user.getRequireCredentials(),
                 "token", token

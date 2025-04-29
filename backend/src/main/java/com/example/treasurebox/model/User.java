@@ -9,6 +9,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String role;
     private String name;
     private String password;
     private int profilePicture;
@@ -19,6 +20,7 @@ public class User {
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
+
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
@@ -31,5 +33,13 @@ public class User {
 
     public boolean isRequireCredentials() {
         return requireCredentials;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

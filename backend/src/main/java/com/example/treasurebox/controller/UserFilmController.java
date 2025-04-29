@@ -37,11 +37,13 @@ public class UserFilmController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-    @GetMapping("/users/{filmId}")
-    public ResponseEntity<List<UserFilm>> getUsersByFilm(@PathVariable Long filmId) {
-        List<UserFilm> userFilms = userFilmRepository.findByFilmId(filmId);
 
 
+    @GetMapping("/films/{userId}")
+    public ResponseEntity<List<UserFilm>> getFilmsByUser(@PathVariable Long userId) {
+        List<UserFilm> userFilms = userFilmRepository.findByUserId(userId);
         return ResponseEntity.ok(userFilms);
     }
+
+
 }

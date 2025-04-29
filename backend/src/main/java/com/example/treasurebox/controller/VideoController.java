@@ -1,36 +1,49 @@
 package com.example.treasurebox.controller;
-
-import org.springframework.core.io.Resource;
+import com.example.treasurebox.model.Film;
+import com.example.treasurebox.repository.FilmRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/video")
 public class VideoController {
+    private final FilmRepository filmRepository;
+    @Autowired
+    public VideoController(FilmRepository filmRepository) {
+        this.filmRepository = filmRepository;
+    }
 
-    private final String VIDEO_PATH = "D:\\song.mp4";
+    @GetMapping("/video")
+    public ResponseEntity<Resource> getVideo(@RequestParam Long id, @RequestHeader HttpHeaders headers) {
+        Optional<Film> filmOptional = filmRepository.findById(id);
 
-    @GetMapping
-    public ResponseEntity<Resource> getVideo(@RequestHeader HttpHeaders headers) {
-        File videoFile = new File(VIDEO_PATH);
 
-        // Enhanced error logging
+        if (filmOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        String decodedPath = java.net.URLDecoder.decode(filmOptional.get().getFilmLocation(), StandardCharsets.UTF_8);
+        System.out.println(decodedPath);
+        File videoFile = new File(decodedPath);
+
         if (!videoFile.exists()) {
-            System.out.println("File not found: " + VIDEO_PATH);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
         if (!videoFile.canRead()) {
-            System.out.println("Cannot read file (permission denied): " + VIDEO_PATH);
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -40,7 +53,6 @@ public class VideoController {
             long start = 0;
             long end = fileLength - 1;
 
-            // Process range header if present
             if (range != null && range.startsWith("bytes=")) {
                 String[] ranges = range.substring(6).split("-");
                 try {
@@ -48,13 +60,10 @@ public class VideoController {
                     if (ranges.length > 1 && !ranges[1].isEmpty()) {
                         end = Long.parseLong(ranges[1]);
                     }
-                } catch (NumberFormatException ignored) {
-                    System.out.println("Invalid range header: " + range);
-                }
+                } catch (NumberFormatException ignored) {}
             }
 
             if (start >= fileLength) {
-                System.out.println("Range start beyond file length");
                 return ResponseEntity.status(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE)
                         .header(HttpHeaders.CONTENT_RANGE, "bytes */" + fileLength)
                         .build();
@@ -66,31 +75,28 @@ public class VideoController {
 
             long contentLength = end - start + 1;
 
-            // Create response with appropriate headers
             HttpHeaders responseHeaders = new HttpHeaders();
             responseHeaders.set(HttpHeaders.CONTENT_TYPE, "video/mp4");
             responseHeaders.set(HttpHeaders.ACCEPT_RANGES, "bytes");
             responseHeaders.set(HttpHeaders.CONTENT_LENGTH, String.valueOf(contentLength));
+            responseHeaders.set(HttpHeaders.CONTENT_RANGE, String.format("bytes %d-%d/%d", start, end, fileLength));
 
-            if (range != null) {
-                responseHeaders.set(HttpHeaders.CONTENT_RANGE, String.format("bytes %d-%d/%d", start, end, fileLength));
-                return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
-                        .headers(responseHeaders)
-                        .body(getResourceFromFile(videoFile, start, contentLength));
-            } else {
-                return ResponseEntity.status(HttpStatus.OK)
-                        .headers(responseHeaders)
-                        .body(getResourceFromFile(videoFile, 0, fileLength));
-            }
+            InputStream inputStream = new FileInputStream(videoFile);
+            inputStream.skip(start);
+
+            return ResponseEntity.status(range != null ? HttpStatus.PARTIAL_CONTENT : HttpStatus.OK)
+                    .headers(responseHeaders)
+                    .body(new InputStreamResource(inputStream));
 
         } catch (IOException e) {
-            System.out.println("Error streaming video: " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    // Helper method to create a resource from file with proper resource management
+
+
+
     private Resource getResourceFromFile(File file, long start, long length) throws IOException {
         InputStream inputStream = new FileInputStream(file);
         inputStream.skip(start);

@@ -49,9 +49,16 @@ export default function LoginPage() {
         localStorage.setItem("userId", data.userId);
         localStorage.setItem("username", data.username);
         localStorage.setItem("profilePicture", data.profilePicture);
+        localStorage.setItem("role", data.role);
       }
-  
-      navigate('/Hub');
+      if(localStorage.role=="user"){
+        navigate('/Hub');
+      }
+      if(localStorage.role=="admin"){
+        navigate('/Manager');
+      }
+      
+      
       
     } catch (err) {
       console.error('Error while logging:', err);

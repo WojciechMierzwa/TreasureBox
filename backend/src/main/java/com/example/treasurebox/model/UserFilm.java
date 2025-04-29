@@ -33,14 +33,7 @@ public class UserFilm {
     public void setId(Long id) {
         this.id = id;
     }
-    /*
-    public int getTimeWatched() {
-        return timeWatched;
-    }
 
-    public void setTimeWatched(int timeWatched) {
-        this.timeWatched = timeWatched;
-    }*/
 
     public User getUser() {
         return user;
