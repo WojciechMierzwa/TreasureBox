@@ -1,12 +1,6 @@
 package com.example.treasurebox.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "appuserfilm")
@@ -24,7 +18,16 @@ public class UserFilm {
     @JoinColumn(name = "appuser_id", referencedColumnName = "id")
     private User user;
 
-    //private int timeWatched;
+    @Column(name = "film_state")
+    private int filmState;
+
+    public int getFilmState() {
+        return filmState;
+    }
+
+    public void setFilmState(int filmState) {
+        this.filmState = filmState;
+    }
 
     public Long getId() {
         return id;
@@ -33,7 +36,6 @@ public class UserFilm {
     public void setId(Long id) {
         this.id = id;
     }
-
 
     public User getUser() {
         return user;

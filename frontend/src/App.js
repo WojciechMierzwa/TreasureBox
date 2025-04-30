@@ -22,6 +22,7 @@ import VideoStreamer from './VideoStreamer';
 import MovieManager from './admin/filmManage/MovieManager';
 import SeriesManager from './admin/filmManage/SeriesManager';
 import TVSerieManager from './admin/filmManage/ManageEpisodes';
+import Block from './components/Block'
 
 function AppContent() {
   const location = useLocation();
@@ -43,6 +44,7 @@ function AppContent() {
         <Route path="/update-film/:id" element={<UpdateFilm />} />
         <Route path="/TVSeries" element={<TVSeries />} />
         <Route path="/TVSeries/:tvShowId" element={<EpisodeList />} />
+        <Route path="/Block" element={<Block />} />
 
         {/* Manage Episodes */}
         <Route path="/SeriesManager/:id" element={<TVSerieManager />} /> 

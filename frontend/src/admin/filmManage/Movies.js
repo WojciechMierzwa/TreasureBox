@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';  
+import Block from '../../components/Block';
 
 function Movies() {
   const [movies, setMovies] = useState([]);
@@ -22,15 +23,14 @@ function Movies() {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen py-8 space-y-4">
+    <div className="flex flex-wrap justify-center items-center min-h-screen py-8 space-y-4">
       {movies.map(film => (
         <div 
           key={film.id} 
-          className="p-4 bg-white shadow-md rounded-lg w-80 cursor-pointer hover:bg-gray-100"
+          className="m-4"
           onClick={() => handleMovieClick(film.id)} 
         >
-          <p className="text-gray-600">{film.name}</p>  
-          <p className="text-gray-600">{film.genre}</p>  
+          <Block name={film.name} genre={film.genre} />
         </div>
       ))}
     </div>

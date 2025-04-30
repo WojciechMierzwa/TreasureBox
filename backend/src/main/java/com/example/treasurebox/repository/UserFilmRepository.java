@@ -15,4 +15,7 @@ public interface UserFilmRepository extends JpaRepository<UserFilm, Long> {
     @Modifying
     @Query("DELETE FROM UserFilm uf WHERE uf.film.id = :filmId")
     void deleteByFilmId(Long filmId);
+
+    public List<UserFilm> findByUserIdAndFilmState(Long userId, int filmState);
+
 }
