@@ -4,6 +4,7 @@ import com.example.treasurebox.dto.user.UpdateRequest;
 import com.example.treasurebox.dto.user.UserCreationRequest;
 import com.example.treasurebox.dto.user.LoginRequest;
 import com.example.treasurebox.dto.user.UserUpdateRequest;
+import com.example.treasurebox.model.Film;
 import com.example.treasurebox.model.User;
 import com.example.treasurebox.model.UserFilm;
 import com.example.treasurebox.repository.UserRepository;
@@ -23,83 +24,87 @@ import java.util.concurrent.ConcurrentHashMap;
 public class UserController {
 
     private final UserRepository userRepository;
-    private final UserFilmRepository userFilmRepository;
     private static final Map<String, Long> sessionTokens = new ConcurrentHashMap<>();
-
-    
     public UserController(UserRepository userRepository, UserFilmRepository userFilmRepository) {
         this.userRepository = userRepository;
-        this.userFilmRepository = userFilmRepository;
     }
-
     @GetMapping
     public List<User> getAllUsers() {
 
         return userRepository.findAll();
     }
 
-    @PostMapping("/createUser")
-    public ResponseEntity<?> createUser(@RequestBody UserCreationRequest request) {
-        try {
-            if (userRepository.existsByName(request.getName())) {
-                Map<String, Object> response = new HashMap<>();
-                response.put("success", false);
-                response.put("message", "Username already exists");
-                return ResponseEntity.badRequest().body(response);
-            }
-
-            User user = new User();
-            System.out.println(request.toString());
-            user.setName(request.getName());
-            user.setPassword(request.getPassword());
-            user.setRequireCredentials(request.isRequireCredentials());
-            user.setProfilePicture((int)(Math.random() * 4) + 1);
-            user.setRole("user");
-
-            User savedUser = userRepository.save(user);
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("userId", savedUser.getId());
-            response.put("success", true);
-            response.put("message", "User created successfully");
-
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
-
-        } catch (Exception e) {
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", false);
-            response.put("message", "Error creating user: " + e.getMessage());
-            return ResponseEntity.badRequest().body(response);
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getSeriesById(@PathVariable Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            return ResponseEntity.ok(user.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("success", false, "message", "User not found"));
         }
     }
+    @PostMapping("/")
+    public ResponseEntity<?> createUser(@RequestBody UserCreationRequest request) {
+        if (userRepository.existsByName(request.getName())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(Map.of("success", false, "message", "Username already exists"));
+        }
 
+        User user = new User();
+        user.setName(request.getName());
+        user.setPassword(request.getPassword());
+        user.setRequireCredentials(request.isRequireCredentials());
+        user.setRole("user");
+        user.setProfilePicture((int)(Math.random() * 4) + 1);
 
-    //moze zmienisc tylko password i requireCredentials
-    @PostMapping("/updateUser")
-    public ResponseEntity<?> updateUser(@RequestBody UserUpdateRequest request) {
+        User saved = userRepository.save(user);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                "success", true,
+                "userId", saved.getId(),
+                "message", "User created successfully"
+        ));
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> deleteUserById(@PathVariable Long id) {
+        if (!userRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        userRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User request) {
         try {
-            Optional<User> optionalUser = userRepository.findById(request.getId());
+            Optional<User> optionalUser = userRepository.findById(id);
             if (optionalUser.isEmpty()) {
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", false);
                 response.put("message", "User not found");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
-
             User user = optionalUser.get();
 
-            // Aktualizuj tylko password i requireCredentials
-            user.setPassword(request.getPassword());
+            if (request.getName() != null && !request.getName().isEmpty()) {
+                user.setName(request.getName());
+            }
+            if (request.getPassword() != null && !request.getPassword().isEmpty()) {
+                user.setPassword(request.getPassword());
+            }
             user.setRequireCredentials(request.isRequireCredentials());
-
-            User savedUser = userRepository.save(user);
-
+            User updatedUser = userRepository.save(user);
             Map<String, Object> response = new HashMap<>();
-            response.put("userId", savedUser.getId());
-            response.put("username", savedUser.getName());
-            response.put("profilePicture", savedUser.getProfilePicture());
             response.put("success", true);
             response.put("message", "User updated successfully");
+            response.put("userId", updatedUser.getId());
+            response.put("username", updatedUser.getName());
+            response.put("role", updatedUser.getRole());
+            response.put("profilePicture", updatedUser.getProfilePicture());
+            response.put("requireCredentials", updatedUser.isRequireCredentials());
 
             return ResponseEntity.ok(response);
 
@@ -107,52 +112,9 @@ public class UserController {
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
             response.put("message", "Error updating user: " + e.getMessage());
-            return ResponseEntity.badRequest().body(response);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-
-
-    @PostMapping("/deleteUser")
-    public ResponseEntity<?> deleteUser(@RequestBody UserUpdateRequest request) {
-        try {
-            // Szukamy użytkownika po ID
-            Optional<User> optionalUser = userRepository.findById(request.getId());
-            if (optionalUser.isEmpty()) {
-                Map<String, Object> response = new HashMap<>();
-                response.put("success", false);
-                response.put("message", "User not found");
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-            }
-
-            User user = optionalUser.get();
-
-            // Usuwamy powiązane rekordy z tabeli UserFilm
-            List<UserFilm> userFilms = userFilmRepository.findByUserId(user.getId()); // Pobieramy rekordy powiązane z użytkownikiem
-            for (UserFilm userFilm : userFilms) {
-                userFilmRepository.delete(userFilm); // Usuwamy każdy powiązany rekord
-            }
-
-            // Usuwamy użytkownika
-            userRepository.delete(user);
-
-            // Odpowiedź sukcesu
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("message", "User deleted successfully");
-
-            return ResponseEntity.ok(response);
-
-        } catch (Exception e) {
-            // Obsługa błędów
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", false);
-            response.put("message", "Error deleting user: " + e.getMessage());
-            return ResponseEntity.badRequest().body(response);
-        }
-    }
-
-
-
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest request) {
@@ -164,14 +126,10 @@ public class UserController {
         }
 
         User user = optionalUser.get();
-
-        // If the user requires a password, validate it
         if (user.isRequireCredentials() && !request.getPassword().equals(user.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("success", false, "message", "Invalid password"));
         }
-
-        // Generate and store token
         String token = UUID.randomUUID().toString();
 
         return ResponseEntity.ok(Map.of(

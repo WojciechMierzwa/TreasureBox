@@ -1,6 +1,5 @@
 package com.example.treasurebox.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,32 +11,31 @@ public class Episode {
     private Long id;
 
     @Column(name = "season_number", nullable = false)
-    private int seasonNumber;
+    private Integer seasonNumber;
 
     @Column(name = "episode_number", nullable = false)
-    private int episodeNumber;
+    private Integer episodeNumber;
 
-    @Column(nullable = false)
+    @Column(name = "name")
     private String name;
 
-    @Column(nullable = false)
-    private int duration;
+    @Column(name = "duration")
+    private Integer duration;
 
     @Column(name = "episode_location", nullable = false)
     private String episodeLocation;
 
     @Column(name = "has_captions", nullable = false)
-    private boolean hasCaptions;
+    private Boolean hasCaptions;
 
     @Column(name = "captions_location")
     private String captionsLocation;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tvshow_id", nullable = false)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    private TVShow tvShow;
+    @ManyToOne
+    @JoinColumn(name = "season_id", nullable = false)
+    private Season season;
 
-    // Gettery i settery
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -46,19 +44,19 @@ public class Episode {
         this.id = id;
     }
 
-    public int getSeasonNumber() {
+    public Integer getSeasonNumber() {
         return seasonNumber;
     }
 
-    public void setSeasonNumber(int seasonNumber) {
+    public void setSeasonNumber(Integer seasonNumber) {
         this.seasonNumber = seasonNumber;
     }
 
-    public int getEpisodeNumber() {
+    public Integer getEpisodeNumber() {
         return episodeNumber;
     }
 
-    public void setEpisodeNumber(int episodeNumber) {
+    public void setEpisodeNumber(Integer episodeNumber) {
         this.episodeNumber = episodeNumber;
     }
 
@@ -70,11 +68,11 @@ public class Episode {
         this.name = name;
     }
 
-    public int getDuration() {
+    public Integer getDuration() {
         return duration;
     }
 
-    public void setDuration(int duration) {
+    public void setDuration(Integer duration) {
         this.duration = duration;
     }
 
@@ -86,11 +84,11 @@ public class Episode {
         this.episodeLocation = episodeLocation;
     }
 
-    public boolean isHasCaptions() {
+    public Boolean getHasCaptions() {
         return hasCaptions;
     }
 
-    public void setHasCaptions(boolean hasCaptions) {
+    public void setHasCaptions(Boolean hasCaptions) {
         this.hasCaptions = hasCaptions;
     }
 
@@ -102,11 +100,11 @@ public class Episode {
         this.captionsLocation = captionsLocation;
     }
 
-    public TVShow getTvShow() {
-        return tvShow;
+    public Season getSeason() {
+        return season;
     }
 
-    public void setTvShow(TVShow tvShow) {
-        this.tvShow = tvShow;
+    public void setSeason(Season season) {
+        this.season = season;
     }
 }

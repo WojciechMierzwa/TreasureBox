@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';  
-
+import Block from '../../../components/Block';
 
 function TVSeries() {
   const [movies, setMovies] = useState([]);
@@ -19,21 +19,21 @@ function TVSeries() {
   }, []);
 
   return (
-
-    <div className="flex flex-col justify-center items-center min-h-screen py-8 space-y-4">
-      {movies.map(film => (
-        <div 
-          key={film.id} 
-          className="p-4 bg-white shadow-md rounded-lg w-80 cursor-pointer hover:bg-gray-100"
-          onClick={() => navigate(`/TVSeries/${film.id}`)} 
-        >
-          <h2 className="text-xl font-bold mb-2">{film.name}</h2>
-          <h3 className="text-gray-600">{film.genre}</h3> 
-          <p className="text-gray-600">{film.filmLocation}</p> 
-        </div>
-      ))}
+    <div className="flex flex-wrap justify-center items-center min-h-screen py-8 space-y-4">
+      {movies.length === 0 ? (
+        <p>Loading TV Series...</p>
+      ) : (
+        movies.map(film => (
+          <div 
+            key={film.id} 
+            className="m-4"
+            onClick={() => navigate(`/TVSeries/${film.id}`)} 
+          >
+            <Block name={film.name} genre={film.genre} /> 
+          </div>
+        ))
+      )}
     </div>
-  
   );
 }
 

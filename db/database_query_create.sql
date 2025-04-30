@@ -51,6 +51,7 @@ CREATE TABLE episode (
 CREATE TABLE AppUserFilm 
     (
      id SERIAL PRIMARY KEY,
+	 film_state INTEGER DEFAULT 0,
      AppUser_id INTEGER NOT NULL, 
      Film_id INTEGER NOT NULL,
      FOREIGN KEY (Film_id) REFERENCES Film(id),
