@@ -6,7 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/episodes")
@@ -19,36 +21,65 @@ public class EpisodeController {
         this.episodeRepository = episodeRepository;
     }
 
-    // Pobierz wszystkie odcinki
     @GetMapping
-    public ResponseEntity<List<Episode>> getAllEpisodes() {
-        List<Episode> episodes = episodeRepository.findAll();
-        return new ResponseEntity<>(episodes, HttpStatus.OK);
+    public ResponseEntity<?> getAllEpisodes() {
+        return ResponseEntity.ok(episodeRepository.findAll());
     }
 
-    @GetMapping("/tvshow/{tvShowId}")
-    public ResponseEntity<List<Episode>> getEpisodesByTvShowId(@PathVariable Long tvShowId) {
-        List<Episode> episodes = episodeRepository.findByTvShowId(tvShowId);
-        if (episodes.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(episodes, HttpStatus.OK);
-    }
-    // Dodaj nowy odcinek
-    @PostMapping
-    public ResponseEntity<Episode> createEpisode(@RequestBody Episode episode) {
-        Episode savedEpisode = episodeRepository.save(episode);
-        return new ResponseEntity<>(savedEpisode, HttpStatus.CREATED);
-    }
-
-    // Usuń odcinek po ID
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEpisode(@PathVariable Long id) {
-        if (episodeRepository.existsById(id)) {
-            episodeRepository.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getEpisodeById(@PathVariable Long id) {
+        Optional<Episode> episode = episodeRepository.findById(id);
+        if (episode.isPresent()) {
+            return ResponseEntity.ok(episode.get());
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("success", false, "message", "Episode not found"));
         }
     }
+
+    @PostMapping
+    public ResponseEntity<?> createEpisode(@RequestBody Episode episode) {
+        Episode saved = episodeRepository.save(episode);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("success", true, "id", saved.getId(), "message", "Episode created"));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateEpisode(@PathVariable Long id, @RequestBody Episode updated) {
+        Optional<Episode> optional = episodeRepository.findById(id);
+        if (optional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("success", false, "message", "Episode not found"));
+        }
+
+        Episode episode = optional.get();
+        if (updated.getName() != null) episode.setName(updated.getName());
+        if (updated.getSeasonNumber() != null) episode.setSeasonNumber(updated.getSeasonNumber());
+        if (updated.getEpisodeNumber() != null) episode.setEpisodeNumber(updated.getEpisodeNumber());
+        if (updated.getEpisodeLocation() != null) episode.setEpisodeLocation(updated.getEpisodeLocation());
+        if (updated.getHasCaptions() != null) episode.setHasCaptions(updated.getHasCaptions());
+        if (updated.getCaptionsLocation() != null) episode.setCaptionsLocation(updated.getCaptionsLocation());
+        if (updated.getDuration() != null) episode.setDuration(updated.getDuration());
+        if (updated.getSeason() != null) episode.setSeason(updated.getSeason());
+
+        Episode saved = episodeRepository.save(episode);
+        return ResponseEntity.ok(Map.of("success", true, "message", "Episode updated", "id", saved.getId()));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteEpisode(@PathVariable Long id) {
+        if (!episodeRepository.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("success", false, "message", "Episode not found"));
+        }
+        episodeRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/by-season/{seasonId}")
+    public ResponseEntity<?> getEpisodesBySeasonId(@PathVariable Long seasonId) {
+        List<Episode> episodes = episodeRepository.findBySeasonId(seasonId);
+        return ResponseEntity.ok(episodes);
+    }
+
 }

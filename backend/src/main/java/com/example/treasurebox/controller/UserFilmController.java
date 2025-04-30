@@ -2,10 +2,12 @@ package com.example.treasurebox.controller;
 
 import com.example.treasurebox.model.UserFilm;
 import com.example.treasurebox.repository.UserFilmRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/user-films")
@@ -18,46 +20,38 @@ public class UserFilmController {
         this.userFilmRepository = userFilmRepository;
     }
 
-    @PostMapping
-    public UserFilm addUserFilm(@RequestBody UserFilm userFilm) {
-        return userFilmRepository.save(userFilm);
-    }
-
+    // Get all user-film relationships
     @GetMapping
-    public ResponseEntity<List<UserFilm>> getAllUserFilms() {
-        List<UserFilm> userFilms = userFilmRepository.findAll();
-        return ResponseEntity.ok(userFilms);
+    public ResponseEntity<?> getAllUserFilms() {
+        return ResponseEntity.ok(userFilmRepository.findAll());
     }
 
+    // Get a specific user-film relationship by id
     @GetMapping("/{id}")
-    public ResponseEntity<UserFilm> getUserFilmById(@PathVariable Long id) {
-        return userFilmRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<?> getUserFilmById(@PathVariable Long id) {
+        Optional<UserFilm> userFilm = userFilmRepository.findById(id);
+        if (userFilm.isPresent()) {
+            return ResponseEntity.ok(userFilm.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("success", false, "message", "User-Film relationship not found"));
+        }
     }
 
-    @GetMapping("/films/{userId}")
-    public ResponseEntity<List<UserFilm>> getFilmsByUser(@PathVariable Long userId) {
-        List<UserFilm> userFilms = userFilmRepository.findByUserId(userId);
-        return ResponseEntity.ok(userFilms);
-    }
+    // Update the 'time_watched' for a specific user-film relationship
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUserFilm(@PathVariable Long id, @RequestBody UserFilm updatedUserFilm) {
+        Optional<UserFilm> optionalUserFilm = userFilmRepository.findById(id);
+        if (optionalUserFilm.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("success", false, "message", "User-Film relationship not found"));
+        }
 
-    // Updated endpoint to update the state of a user's film with the full UserFilm object
-    @PutMapping("/{userFilmId}")
-    public ResponseEntity<UserFilm> updateUserFilmState(
-            @PathVariable Long userFilmId,
-            @RequestBody UserFilm userFilm) {
-
-        return userFilmRepository.findById(userFilmId)
-                .map(existingUserFilm -> {
-                    // Update the stateFilm with the new value from the request body
-                    existingUserFilm.setFilmState(userFilm.getFilmState());
-
-                    // You can add more fields here if needed (e.g., timeWatched, etc.)
-
-                    userFilmRepository.save(existingUserFilm);
-                    return ResponseEntity.ok(existingUserFilm);
-                })
-                .orElse(ResponseEntity.notFound().build());
+        UserFilm userFilm = optionalUserFilm.get();
+        if (updatedUserFilm.getTimeWatched() != null) {
+            userFilm.setTimeWatched(updatedUserFilm.getTimeWatched());
+        }
+        UserFilm savedUserFilm = userFilmRepository.save(userFilm);
+        return ResponseEntity.ok(Map.of("success", true, "message", "User-Film relationship updated", "id", savedUserFilm.getId()));
     }
 }

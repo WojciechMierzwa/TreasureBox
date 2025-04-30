@@ -3,8 +3,8 @@ package com.example.treasurebox.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "app_user_film")
-public class UserFilm {
+@Table(name = "app_user_episode")
+public class UserEpisode {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,20 +14,16 @@ public class UserFilm {
     private Integer timeWatched;
 
     @ManyToOne
-    @JoinColumn(name = "app_user_id", referencedColumnName = "id", nullable = false)
-    private User appUser;  // Zakładając, że masz klasę User
+    @JoinColumn(name = "app_user_id", nullable = false)
+    private User appUser;
 
     @ManyToOne
-    @JoinColumn(name = "film_id", referencedColumnName = "id", nullable = false)
-    private Film film;  // Zakładając, że masz klasę Film
+    @JoinColumn(name = "episode_id", nullable = false)
+    private Episode episode;
 
-    // Gettery i Settery
+    // Getters and Setters
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Integer getTimeWatched() {
@@ -46,11 +42,15 @@ public class UserFilm {
         this.appUser = appUser;
     }
 
-    public Film getFilm() {
-        return film;
+    public Episode getEpisode() {
+        return episode;
     }
 
-    public void setFilm(Film film) {
-        this.film = film;
+    public void setEpisode(Episode episode) {
+        this.episode = episode;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
