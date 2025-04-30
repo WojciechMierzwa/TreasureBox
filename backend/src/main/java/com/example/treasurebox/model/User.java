@@ -3,16 +3,25 @@ package com.example.treasurebox.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "appuser")
+@Table(name = "app_user")
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "role", nullable = false)
     private String role;
+
+    @Column(name = "name", nullable = false)
     private String name;
+
+    @Column(name = "password", nullable = false)
     private String password;
+
+    @Column(name = "profile_picture", nullable = false)
     private int profilePicture;
+
+    @Column(name = "require_credentials", nullable = false)
     private boolean requireCredentials;
 
     public Long getId() { return id; }

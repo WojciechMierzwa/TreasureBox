@@ -16,9 +16,5 @@ public interface FilmRepository extends JpaRepository<Film, Long> {
 
     Optional<Film> findById(long id);
 
-    @Query("SELECT f FROM Film f WHERE "
-            + "(:genre IS NULL OR f.genre = :genre) AND "
-            + "(:mediaType IS NULL OR f.mediaType = :mediaType)")
-    List<Film> findByGenreAndMediaType(@Param("genre") String genre,
-                                       @Param("mediaType") String mediaType);
+
 }

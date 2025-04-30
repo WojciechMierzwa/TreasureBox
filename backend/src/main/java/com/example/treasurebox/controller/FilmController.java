@@ -3,15 +3,18 @@ package com.example.treasurebox.controller;
 
 import com.example.treasurebox.dto.film.FilmCreateRequest;
 import com.example.treasurebox.model.Film;
+import com.example.treasurebox.model.Series;
+import com.example.treasurebox.model.User;
 import com.example.treasurebox.repository.FilmRepository;
 import com.example.treasurebox.repository.UserFilmRepository;
+import com.example.treasurebox.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-
+import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @RequestMapping("/api/films")
@@ -20,79 +23,93 @@ import java.util.*;
 public class FilmController {
 
     private final FilmRepository filmRepository;
-    private UserFilmRepository userFilmRepository;
 
-    public FilmController(FilmRepository filmRepository, UserFilmRepository userFilmRepository) {
+    // Konstruktor
+    public FilmController(FilmRepository filmRepository) {
         this.filmRepository = filmRepository;
-        this.userFilmRepository = userFilmRepository;
     }
 
-
+    // Pobieranie wszystkich filmów
     @GetMapping
-    public List<Film> getFilteredFilms(@RequestParam(required = false) String genre,
-                                       @RequestParam(required = false) String mediaType) {
-        return filmRepository.findByGenreAndMediaType(genre, mediaType);
+    public List<Film> getAllFilms() {
+        return filmRepository.findAll();
     }
-
 
     @GetMapping("/{id}")
-    public ResponseEntity<Film> getFilmById(@PathVariable Long id) {
+    public ResponseEntity<?> getSeriesById(@PathVariable Long id) {
         Optional<Film> film = filmRepository.findById(id);
-        return film.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        if (film.isPresent()) {
+            return ResponseEntity.ok(film.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("success", false, "message", "Film not found"));
+        }
     }
 
+    // Usuwanie filmu
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteFilmById(@PathVariable("id") Long id) {
-        System.out.println("test usuniecia");
-
+    public ResponseEntity<Void> deleteFilmById(@PathVariable Long id) {
         if (!filmRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-        userFilmRepository.deleteByFilmId(id);
         filmRepository.deleteById(id);
-
         return ResponseEntity.noContent().build();
     }
 
-
+    // Dodawanie filmu
     @PostMapping
-    public ResponseEntity<Film> createFilm(@RequestBody FilmCreateRequest request) {
+    public ResponseEntity<?> createFilm(@RequestBody FilmCreateRequest request) {
         Film film = new Film();
         film.setName(request.getName());
+        film.setDuration(request.getDuration());
         film.setFilmLocation(request.getFilmLocation());
-        film.setMediaType("Movie");
-        film.setDuration(0);
-        film.setGenre(request.getGenre());
-        film.setCaptionsLocation(request.getCaptionsLocation());
         film.setHasCaptions(request.isHasCaptions());
+        film.setCaptionsLocation(request.getCaptionsLocation());
+        film.setGenre(request.getGenre());
+
+        // Zapisanie nowego filmu
         Film savedFilm = filmRepository.save(film);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedFilm);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                "success", true,
+                "filmId", savedFilm.getId(),
+                "message", "Film created successfully"
+        ));
     }
 
-    @PutMapping
-    public ResponseEntity<Film> updateFilm(@RequestBody Film request) {
-        Optional<Film> optionalFilm = filmRepository.findById(request.getId());
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateFilm(@PathVariable Long id, @RequestBody Film request) {
+        Optional<Film> optionalFilm = filmRepository.findById(id);
         if (optionalFilm.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("success", false, "message", "Film not found"));
         }
 
         Film film = optionalFilm.get();
-        film.setName(request.getName());
-        film.setFilmLocation(request.getFilmLocation());
-        film.setGenre(request.getGenre());
-        film.setCaptionsLocation(request.getCaptionsLocation());
-        film.setHasCaptions(request.isHasCaptions());
+        if (request.getName() != null && !request.getName().isEmpty()) {
+            film.setName(request.getName());
+        }
+        if (request.getDuration() > 0) {
+            film.setDuration(request.getDuration());
+        }
+        if (request.getFilmLocation() != null && !request.getFilmLocation().isEmpty()) {
+            film.setFilmLocation(request.getFilmLocation());
+        }
+        if (request.isHasCaptions() != film.isHasCaptions()) {
+            film.setHasCaptions(request.isHasCaptions());
+        }
+        if (request.getCaptionsLocation() != null && !request.getCaptionsLocation().isEmpty()) {
+            film.setCaptionsLocation(request.getCaptionsLocation());
+        }
+        if (request.getGenre() != null && !request.getGenre().isEmpty()) {
+            film.setGenre(request.getGenre());
+        }
+        Film updatedFilm = filmRepository.save(film);
 
-        Film savedFilm = filmRepository.save(film);
-        return ResponseEntity.ok(savedFilm);
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "filmId", updatedFilm.getId(),
+                "message", "Film updated successfully"
+        ));
     }
-
-
-
-
-
-
-
-
 }
