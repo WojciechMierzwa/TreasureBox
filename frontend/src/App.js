@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import ProfilePage from './login/ProfilePage';
-import CreateUser from './login/CreateUser';
+import CreateUser from  './user/pages/manageAccount/CreateUser';
 import Hub from './user/pages/Hub';
 import LoginPage from './login/LoginPage';
 import Video from './user/pages/Video';
@@ -13,9 +13,9 @@ import MyList from './user/pages/Film/MyList';
 import HubNavbar from './components/HubNavbar';
 import CreateFilm from './user/pages/Film/CreateFilm';
 import UpdateFilm from './user/pages/Film/UpdateFilm';
-import TVShow from './user/pages/TVShow/TVShow';
+import Serie from './user/pages/TVShow/Serie';
 import TVShowDetails from './user/pages/TVShow/TVShowDetails';
-import TVSeries from './user/pages/TVShow/TVSeries';
+import Series from './user/pages/TVShow/Series';
 import EpisodeList from './user/pages/Episode/EpisodeList';
 import Manager from './admin/Manager';
 import VideoStreamer from './VideoStreamer';
@@ -42,8 +42,8 @@ function AppContent() {
         <Route path="/Movies/:id" element={<MovieDetail />} />
         <Route path="/MyList/:id" element={<MyList />} />
         <Route path="/update-film/:id" element={<UpdateFilm />} />
-        <Route path="/TVSeries" element={<TVSeries />} />
-        <Route path="/TVSeries/:tvShowId" element={<EpisodeList />} />
+        <Route path="/Series" element={<Series />} />
+        <Route path="/Series/:id" element={<Serie />} />
         <Route path="/Block" element={<Block />} />
 
         {/* Manage Episodes */}

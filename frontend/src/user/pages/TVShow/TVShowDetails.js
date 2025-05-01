@@ -9,7 +9,7 @@ function TVShowDetails() {
   useEffect(() => {
     const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS;
     
-    fetch(`${backendAddress}/api/TVShow/${id}`)
+    fetch(`${backendAddress}/api/series/${id}`)
       .then(res => {
         if (!res.ok) {
           throw new Error('Failed to fetch TV Show');

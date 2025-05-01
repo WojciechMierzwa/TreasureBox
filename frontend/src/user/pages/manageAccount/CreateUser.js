@@ -18,7 +18,7 @@ export default function CreateUser() {
     
     try {
       const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS;
-      const apiUrl = `${backendAddress}/api/users/createUser`;
+      const apiUrl = `${backendAddress}/api/users/`;
       
       const userData = {
         name: name,
