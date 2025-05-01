@@ -23,7 +23,7 @@ function Movies() {
   };
 
   return (
-    <div className="flex flex-wrap justify-center items-center min-h-screen py-8 space-y-4">
+    <div className="flex flex-wrap justify-start items-start gap-4 p-8">
       {movies.length === 0 ? (
         <p>Loading movies...</p>
       ) : (

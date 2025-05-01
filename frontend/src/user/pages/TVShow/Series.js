@@ -2,34 +2,34 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';  
 import Block from '../../../components/Block';
 
-function TVSeries() {
-  const [movies, setMovies] = useState([]);
+function Series() {
+  const [records, setRecords] = useState([]);
   const navigate = useNavigate(); 
 
   useEffect(() => {
     const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS;
   
-    fetch(`${backendAddress}/api/films?mediaType=Series`)
+    fetch(`${backendAddress}/api/series`)
       .then(res => res.json())
       .then(data => {
-        console.log("Fetched films:", data); 
-        setMovies(data); 
+        console.log("Fetched series:", data); 
+        setRecords(data); 
       })
       .catch(err => console.error('Fetch error:', err));
   }, []);
 
   return (
-    <div className="flex flex-wrap justify-center items-center min-h-screen py-8 space-y-4">
-      {movies.length === 0 ? (
+    <div className="flex flex-wrap justify-start items-start gap-4 p-8">
+      {records.length === 0 ? (
         <p>Loading TV Series...</p>
       ) : (
-        movies.map(film => (
+        records.map(series => (
           <div 
-            key={film.id} 
+            key={series.id} 
             className="m-4"
-            onClick={() => navigate(`/TVSeries/${film.id}`)} 
+            onClick={() => navigate(`/Series/${series.id}`)} 
           >
-            <Block name={film.name} genre={film.genre} /> 
+            <Block name={series.name} genre={series.genre} /> 
           </div>
         ))
       )}
@@ -37,4 +37,4 @@ function TVSeries() {
   );
 }
 
-export default TVSeries;
+export default Series;

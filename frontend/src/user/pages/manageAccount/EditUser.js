@@ -25,17 +25,16 @@ export default function EditUser() {
 
     try {
       const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS;
-      const apiUrl = `${backendAddress}/api/users/updateUser`;
+      const apiUrl = `${backendAddress}/api/users/${id}`;
 
       const userData = {
-        id:id,
         name:name,
         password:password,
-        requireCredentials:requireCredentials
+        require_credentials:requireCredentials
       };
 
       const response = await fetch(apiUrl, {
-        method: 'POST',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -62,52 +61,47 @@ export default function EditUser() {
       setIsLoading(false);
     }
   };
-
-
-
-
   const deleteUser = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
     setSuccess('');
-
+  
     try {
       const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS;
-      const apiUrl = `${backendAddress}/api/users/deleteUser`;
-
-      const userData = {
-        id:id,
-      };
-
+      const apiUrl = `${backendAddress}/api/users/${id}`;
+  
       const response = await fetch(apiUrl, {
-        method: 'POST',
+        method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
+        }
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Invalid credentials');
+  
+      if (response.status === 204) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("username");
+        localStorage.removeItem("profilePicture");
+        localStorage.removeItem("requireCredentials");
+  
+        setSuccess('User deleted successfully!');
+        navigate('/');
+      } else {
+        const text = await response.text();
+        const errorData = text ? JSON.parse(text) : {};
+        throw new Error(errorData.message || 'Failed to delete');
       }
-
-      const data = await response.json();
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("userId", data.userId);
-      localStorage.setItem("username", data.username);
-      localStorage.setItem("profilePicture", data.profilePicture);
-
-      setSuccess('User deleted successfully!');
-      navigate('/');
     } catch (err) {
-      console.error('Error while updating:', err);
-      setError(err.message || 'An error occurred while updating');
+      console.error('Error while deleting:', err);
+      setError(err.message || 'An error occurred while deleting');
     } finally {
       setIsLoading(false);
     }
   };
+  
+
+  
 
   const returnToProfilePage = () => {
     navigate('/');
