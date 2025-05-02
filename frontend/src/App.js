@@ -17,13 +17,14 @@ import Series from './user/pages/TVShow/Series';
 import AdminPanel from './admin/AdminPanel';
 import MovieManager from './admin/filmManage/MovieManager';
 import SeriesManager from './admin/seriesManage/SeriesManager';
-import TVSerieManager from './admin/seriesManage/ManageEpisodes';
 import ViewSeries from './admin/seriesManage/ViewSeries';
 import UpdateSerie from './admin/seriesManage/UpdateSerie';
 import ManageSeasons from './admin/seriesManage/seasonManage/ManageSeasons';
+import CreateEpisode from './admin/seriesManage/episodeManage/CreateEpisode';
+import UpdateEpisode from './admin/seriesManage/episodeManage/UpdateEpisode';
 import CreateSeason from './admin/seriesManage/seasonManage/CreateSeason';
 import UpdateSeason from './admin/seriesManage/seasonManage/UpdateSeason';
-
+import ManageEpisodes from './admin/seriesManage/episodeManage/ManageEpisodes';
 
 function AppLayout() {
   const location = useLocation();
@@ -52,6 +53,7 @@ function AppContent() {
         <Route path="/MoviesManager" element={<MovieManager />} />
         <Route path="/create-movie" element={<CreateFilm />} />
         <Route path="/update-movie/:id" element={<UpdateFilm />} />
+        
         {/* CRUD Series*/}
         <Route path="/SeriesManager" element={<SeriesManager />} />
         <Route path="/view-series/:id" element={<ViewSeries />} />
@@ -62,11 +64,16 @@ function AppContent() {
         <Route path="/create-season" element={<CreateSeason />} />
         <Route path="/update-season/:id" element={<UpdateSeason />} />
 
+        {/* CRUD Episodes */}
+        <Route path="/manage-episodes" element={<ManageEpisodes />} />
+        <Route path="/create-episode" element={<CreateEpisode />} />
+        <Route path="/update-episode/:id" element={<UpdateEpisode />} />
+
+        {/* User Routes */}
         <Route path="/Hub" element={<Hub />} />
         <Route path="/Settings" element={<Settings />} />
         <Route path="/watch/movie" element={<Video mode="movie" />} />
         <Route path="/watch/episode" element={<Video mode="episode" />} />
- 
         
         <Route path="/Movies" element={<Movies />} />
         <Route path="/Movies/:id" element={<MovieDetail />} />
@@ -74,11 +81,10 @@ function AppContent() {
         <Route path="/Series" element={<Series />} />
         <Route path="/Series/:id" element={<Serie />} />
         <Route path="/MyList/:id" element={<MyList />} />
-        </Route>
+      </Route>
 
-        {/* 404 fallback */}
-        <Route path="*" element={<ProfilePage />} />
-
+      {/* 404 fallback */}
+      <Route path="*" element={<ProfilePage />} />
     </Routes>
   );
 }
