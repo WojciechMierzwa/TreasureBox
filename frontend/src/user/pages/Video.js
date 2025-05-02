@@ -9,15 +9,6 @@ function Video() {
 
   const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS;
   const apiUrl = `${backendAddress}/video/video?id=${id}`;
-
-
-  //const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS;
-
-  //const encodedPath = encodeURIComponent(filmLocation);  
-  //const apiUrl = `${backendAddress}/video?path=${encodedPath}`;
-  //const apiUrl = `${backendAddress}/video/video?id=${id}`;
-
-  
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);

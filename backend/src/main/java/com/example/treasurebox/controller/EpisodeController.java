@@ -1,5 +1,6 @@
 package com.example.treasurebox.controller;
 
+import com.example.treasurebox.dto.EpisodeListItem;
 import com.example.treasurebox.model.Episode;
 import com.example.treasurebox.repository.EpisodeRepository;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,6 @@ import java.util.Optional;
 public class EpisodeController {
 
     private final EpisodeRepository episodeRepository;
-
     public EpisodeController(EpisodeRepository episodeRepository) {
         this.episodeRepository = episodeRepository;
     }
@@ -81,5 +81,11 @@ public class EpisodeController {
         List<Episode> episodes = episodeRepository.findBySeasonId(seasonId);
         return ResponseEntity.ok(episodes);
     }
+
+    @GetMapping("/list")
+    public List<EpisodeListItem> getEpisodeList() {
+        return episodeRepository.findAllEpisodeListItems();
+    }
+
 
 }

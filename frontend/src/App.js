@@ -37,7 +37,8 @@ function AppContent() {
         <Route path="/CreateUser" element={<CreateUser />} />
         <Route path="/CreateFilm" element={<CreateFilm />} />
         <Route path="/LoginPage" element={<LoginPage />} />
-        <Route path="/Video" element={<Video />} />
+        <Route path="/watch/movie" element={<Video />} />
+        <Route path="/watch/episode" element={<Video />} />
         <Route path="/Movies" element={<Movies />} />
         <Route path="/Movies/:id" element={<MovieDetail />} />
         <Route path="/MyList/:id" element={<MyList />} />

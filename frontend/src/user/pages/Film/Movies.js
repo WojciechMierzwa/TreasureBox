@@ -9,7 +9,7 @@ function Movies() {
   useEffect(() => {
     const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS;
   
-    fetch(`${backendAddress}/api/films?mediaType=Movie`)
+    fetch(`${backendAddress}/api/films`)
       .then(res => res.json())
       .then(data => {
         console.log("Fetched films:", data); 
@@ -19,7 +19,7 @@ function Movies() {
   }, []);
 
   const handleMovieClick = (id) => {
-    navigate(`/video?id=${id}`);
+    navigate(`/watch/movie/?id=${id}`);
   };
 
   return (
