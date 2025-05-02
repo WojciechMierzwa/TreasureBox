@@ -55,7 +55,7 @@ export default function LoginPage() {
         navigate('/Hub');
       }
       if(localStorage.role=="admin"){
-        navigate('/Manager');
+        navigate('/AdminPanel');
       }
       
       

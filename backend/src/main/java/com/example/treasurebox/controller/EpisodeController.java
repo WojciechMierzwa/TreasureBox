@@ -59,7 +59,6 @@ public class EpisodeController {
         if (updated.getEpisodeLocation() != null) episode.setEpisodeLocation(updated.getEpisodeLocation());
         if (updated.getHasCaptions() != null) episode.setHasCaptions(updated.getHasCaptions());
         if (updated.getCaptionsLocation() != null) episode.setCaptionsLocation(updated.getCaptionsLocation());
-        if (updated.getDuration() != null) episode.setDuration(updated.getDuration());
         if (updated.getSeason() != null) episode.setSeason(updated.getSeason());
 
         Episode saved = episodeRepository.save(episode);

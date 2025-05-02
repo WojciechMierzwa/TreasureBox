@@ -38,7 +38,7 @@ function Serie() {
           <li key={ep.episodeId}>
   
   <Link
-  to={`/watch/episode/?id=${ep.episodeId}`} // Use an absolute path with a leading "/"
+  to={`/watch/episode/?id=${ep.episodeId}`}
   className="text-blue-600 hover:underline"
 >
               Season: {ep.seasonName} – Episode {ep.episodeNumber}

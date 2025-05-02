@@ -46,7 +46,7 @@ function CreateFilm() {
 
       const data = await response.json();
       setSuccess('Film created successfully!');
-      navigate('/'); // redirect to home or wherever you want
+      navigate('/MoviesManager'); // redirect to home or wherever you want
     } catch (err) {
       console.error('Error creating film:', err);
       setError(err.message || 'An error occurred while creating the film');
@@ -56,7 +56,7 @@ function CreateFilm() {
   };
 
   const handleCancel = () => {
-    navigate('/');
+    navigate('/MoviesManager');
   };
 
   return (

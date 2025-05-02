@@ -47,7 +47,7 @@ function UpdateFilm() {
 
     try {
       const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS;
-      const apiUrl = `${backendAddress}/api/films`;
+      const apiUrl = `${backendAddress}/api/films/${id}`;
 
       const filmData = {
         id: parseInt(id), // <-- important to include id for updating
@@ -72,7 +72,7 @@ function UpdateFilm() {
       }
 
       setSuccess('Film updated successfully!');
-      navigate('/'); // Redirect after success
+      navigate('/MoviesManager');
     } catch (err) {
       console.error('Error updating film:', err);
       setError(err.message || 'An error occurred while updating the film');
@@ -82,7 +82,7 @@ function UpdateFilm() {
   };
 
   const handleCancel = () => {
-    navigate('/');
+    navigate('/MoviesManager');
   };
 
   return (
@@ -153,6 +153,8 @@ function UpdateFilm() {
               Has Captions
             </label>
           </div>
+          
+          
 
           <div className="space-y-3">
             <button

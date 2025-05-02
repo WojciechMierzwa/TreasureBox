@@ -61,7 +61,6 @@ public class FilmController {
     public ResponseEntity<?> createFilm(@RequestBody FilmCreateRequest request) {
         Film film = new Film();
         film.setName(request.getName());
-        film.setDuration(request.getDuration());
         film.setFilmLocation(request.getFilmLocation());
         film.setHasCaptions(request.isHasCaptions());
         film.setCaptionsLocation(request.getCaptionsLocation());
@@ -88,9 +87,6 @@ public class FilmController {
         Film film = optionalFilm.get();
         if (request.getName() != null && !request.getName().isEmpty()) {
             film.setName(request.getName());
-        }
-        if (request.getDuration() > 0) {
-            film.setDuration(request.getDuration());
         }
         if (request.getFilmLocation() != null && !request.getFilmLocation().isEmpty()) {
             film.setFilmLocation(request.getFilmLocation());

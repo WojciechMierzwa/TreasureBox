@@ -1,6 +1,6 @@
 import React from 'react'
 
-function Manager() {
+function AdminPanel() {
   return (
     <div className="flex gap-4 p-5">
       <div className="w-1/2 bg-gray-100 p-5 rounded-lg shadow-md">
@@ -17,4 +17,4 @@ function Manager() {
   )
 }
 
-export default Manager
+export default AdminPanel

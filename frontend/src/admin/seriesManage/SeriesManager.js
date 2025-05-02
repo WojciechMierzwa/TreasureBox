@@ -10,7 +10,7 @@ function SeriesManager() {
 
   useEffect(() => {
     const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS;
-    fetch(`${backendAddress}/api/films?mediaType=Series`)
+    fetch(`${backendAddress}/api/series`)
       .then(res => res.json())
       .then(data => setMovies(data))
       .catch(err => console.error('Fetch error:', err));

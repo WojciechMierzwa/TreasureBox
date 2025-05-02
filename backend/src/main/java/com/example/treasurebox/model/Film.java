@@ -20,8 +20,6 @@ public class Film {
     private Long id;
     @Column(name = "name", nullable = false)
     private String name;
-    @Column(name = "duration", nullable = false)
-    private int duration;
     @Column(name = "film_location", nullable = false)
     private String filmLocation;
     @Column(name = "has_captions", nullable = false)
@@ -39,13 +37,6 @@ public class Film {
         this.id = id;
     }
 
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
 
     public String getName() {
         return name;
