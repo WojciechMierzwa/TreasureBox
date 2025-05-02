@@ -18,7 +18,11 @@ import AdminPanel from './admin/AdminPanel';
 import MovieManager from './admin/filmManage/MovieManager';
 import SeriesManager from './admin/seriesManage/SeriesManager';
 import TVSerieManager from './admin/seriesManage/ManageEpisodes';
-
+import ViewSeries from './admin/seriesManage/ViewSeries';
+import UpdateSerie from './admin/seriesManage/UpdateSerie';
+import ManageSeasons from './admin/seriesManage/seasonManage/ManageSeasons';
+import CreateSeason from './admin/seriesManage/seasonManage/CreateSeason';
+import UpdateSeason from './admin/seriesManage/seasonManage/UpdateSeason';
 
 
 function AppLayout() {
@@ -50,7 +54,13 @@ function AppContent() {
         <Route path="/update-movie/:id" element={<UpdateFilm />} />
         {/* CRUD Series*/}
         <Route path="/SeriesManager" element={<SeriesManager />} />
-        <Route path="/SeriesManager/:id" element={<TVSerieManager />} />
+        <Route path="/view-series/:id" element={<ViewSeries />} />
+        <Route path="/update-series/:id" element={<UpdateSerie />} />
+
+        {/* CRUD Seasons*/}
+        <Route path="/manage-seasons" element={<ManageSeasons />} />
+        <Route path="/create-season" element={<CreateSeason />} />
+        <Route path="/update-season/:id" element={<UpdateSeason />} />
 
         <Route path="/Hub" element={<Hub />} />
         <Route path="/Settings" element={<Settings />} />

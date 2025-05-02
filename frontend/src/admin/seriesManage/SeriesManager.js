@@ -27,13 +27,13 @@ function SeriesManager() {
   );
 
   const handleEdit = (id) => {
-    navigate(`/update-film/${id}`);
+    navigate(`/update-series/${id}`);
   };
 
   const handleDelete = (id) => {
     const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS;
     if (window.confirm('Are you sure you want to delete this series?')) {
-      fetch(`${backendAddress}/api/films/${id}`, { method: 'DELETE' })
+      fetch(`${backendAddress}/api/series/${id}`, { method: 'DELETE' })
         .then(res => {
           if (res.ok) {
             setMovies(prev => prev.filter(m => m.id !== id));
@@ -46,8 +46,8 @@ function SeriesManager() {
   };
 
   // Poprawione przekierowanie do zarządzania odcinkami
-  const viewEpisodes = (id) => {
-    navigate(`/SeriesManager/${id}`);
+  const viewSerie = (id) => {
+    navigate(`/view-series/${id}`);
   };
 
   return (
@@ -75,10 +75,10 @@ function SeriesManager() {
             </div>
             <div className="flex flex-wrap gap-2">
               <button
-                onClick={() => viewEpisodes(movie.id)}
+                onClick={() => viewSerie(movie.id)}
                 className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
               >
-                View Episodes
+                View Serie
               </button>
               <button
                 onClick={() => handleEdit(movie.id)}
