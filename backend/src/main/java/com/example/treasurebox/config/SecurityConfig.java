@@ -19,7 +19,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // Disable CSRF protection
                 .cors(Customizer.withDefaults()) // Enable CORS
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/**", "/video/**").permitAll() // Allow access to /api/** and /video/**
+                        .requestMatchers("/api/**", "/watch/**", "/watch/episode").permitAll() // Allow access to /api/** and /video/**
                         .anyRequest().authenticated() // Require authentication for all other paths
                 );
 

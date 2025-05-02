@@ -1,7 +1,6 @@
 package com.example.treasurebox.controller;
-
-import com.example.treasurebox.model.Episode;
-import com.example.treasurebox.repository.EpisodeRepository;
+import com.example.treasurebox.model.Film;
+import com.example.treasurebox.repository.FilmRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -10,39 +9,39 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
-
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
-@RequestMapping("/watch/episode")
-public class VideoSeriesController {
-    private final EpisodeRepository episodeRepository;
-
+@RequestMapping("/watch")
+public class VideoController {
+    private final FilmRepository filmRepository;
     @Autowired
-    public VideoSeriesController(EpisodeRepository episodeRepository) {
-        this.episodeRepository = episodeRepository;
+    public VideoController(FilmRepository filmRepository) {
+        this.filmRepository = filmRepository;
     }
 
-    @GetMapping("")
-    public ResponseEntity<Resource> getVideo(@RequestParam Long id, @RequestHeader HttpHeaders headers) {
-        Optional<Episode> episodeOptional = episodeRepository.findById(id);
 
-        // Check if the episode exists
-        if (episodeOptional.isEmpty()) {
+
+
+    @GetMapping("/movie")
+    public ResponseEntity<Resource> getVideo(@RequestParam Long id, @RequestHeader HttpHeaders headers) {
+        Optional<Film> filmOptional = filmRepository.findById(id);
+
+
+        if (filmOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        String decodedPath = java.net.URLDecoder.decode(episodeOptional.get().getEpisodeLocation(), StandardCharsets.UTF_8);
+        String decodedPath = java.net.URLDecoder.decode(filmOptional.get().getFilmLocation(), StandardCharsets.UTF_8);
         System.out.println(decodedPath);
-
         File videoFile = new File(decodedPath);
 
-        // Check if the file exists and is readable
         if (!videoFile.exists()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -57,7 +56,6 @@ public class VideoSeriesController {
             long start = 0;
             long end = fileLength - 1;
 
-            // Handle byte range requests
             if (range != null && range.startsWith("bytes=")) {
                 String[] ranges = range.substring(6).split("-");
                 try {
@@ -68,7 +66,6 @@ public class VideoSeriesController {
                 } catch (NumberFormatException ignored) {}
             }
 
-            // If the range is not satisfiable, return the error response
             if (start >= fileLength) {
                 return ResponseEntity.status(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE)
                         .header(HttpHeaders.CONTENT_RANGE, "bytes */" + fileLength)
@@ -99,6 +96,9 @@ public class VideoSeriesController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+
+
 
     private Resource getResourceFromFile(File file, long start, long length) throws IOException {
         InputStream inputStream = new FileInputStream(file);

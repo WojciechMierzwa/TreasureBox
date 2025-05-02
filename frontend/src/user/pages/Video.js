@@ -3,12 +3,12 @@ import ReactPlayer from 'react-player';
 import { Volume2, VolumeX, Play, Pause, SkipForward, SkipBack, Maximize } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 
-function Video() {
+function Video({ mode }) {
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
 
   const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS;
-  const apiUrl = `${backendAddress}/video/video?id=${id}`;
+  const apiUrl = `${backendAddress}/watch/${mode}?id=${id}`;
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);

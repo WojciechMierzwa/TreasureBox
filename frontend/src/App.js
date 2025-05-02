@@ -9,14 +9,13 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Settings from './user/pages/manageAccount/Settings';
 import Movies from './user/pages/Film/Movies';
 import MovieDetail from './user/pages/Film/MovieDetails';
-import MyList from './user/pages/Film/MyList';
+import MyList from './user/pages/MyList';
 import HubNavbar from './components/HubNavbar';
 import CreateFilm from './user/pages/Film/CreateFilm';
 import UpdateFilm from './user/pages/Film/UpdateFilm';
 import Serie from './user/pages/TVShow/Serie';
 import TVShowDetails from './user/pages/TVShow/TVShowDetails';
 import Series from './user/pages/TVShow/Series';
-import EpisodeList from './user/pages/Episode/EpisodeList';
 import Manager from './admin/Manager';
 import VideoStreamer from './VideoStreamer';
 import MovieManager from './admin/filmManage/MovieManager';
@@ -37,8 +36,8 @@ function AppContent() {
         <Route path="/CreateUser" element={<CreateUser />} />
         <Route path="/CreateFilm" element={<CreateFilm />} />
         <Route path="/LoginPage" element={<LoginPage />} />
-        <Route path="/watch/movie" element={<Video />} />
-        <Route path="/watch/episode" element={<Video />} />
+        <Route path="/watch/movie" element={<Video mode={"movie"}/>} />
+        <Route path="/watch/episode" element={<Video mode={"episode"}/>} />
         <Route path="/Movies" element={<Movies />} />
         <Route path="/Movies/:id" element={<MovieDetail />} />
         <Route path="/MyList/:id" element={<MyList />} />

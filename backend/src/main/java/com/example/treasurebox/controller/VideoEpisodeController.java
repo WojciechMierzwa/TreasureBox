@@ -1,6 +1,7 @@
 package com.example.treasurebox.controller;
-import com.example.treasurebox.model.Film;
-import com.example.treasurebox.repository.FilmRepository;
+
+import com.example.treasurebox.model.Episode;
+import com.example.treasurebox.repository.EpisodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -9,33 +10,34 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
+
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
-@RequestMapping("/watch/movie")
-public class VideoMovieController {
-    private final FilmRepository filmRepository;
+@RequestMapping("/watch")
+public class VideoEpisodeController {
+
+    private final EpisodeRepository episodeRepository;
+
     @Autowired
-    public VideoMovieController(FilmRepository filmRepository) {
-        this.filmRepository = filmRepository;
+    public VideoEpisodeController(EpisodeRepository episodeRepository) {
+        this.episodeRepository = episodeRepository;
     }
 
-    @GetMapping("")
-    public ResponseEntity<Resource> getVideo(@RequestParam Long id, @RequestHeader HttpHeaders headers) {
-        Optional<Film> filmOptional = filmRepository.findById(id);
+    @GetMapping("/episode")
+    public ResponseEntity<Resource> getEpisode(@RequestParam Long id, @RequestHeader HttpHeaders headers) {
+        Optional<Episode> episodeOptional = episodeRepository.findById(id);
 
-
-        if (filmOptional.isEmpty()) {
+        if (episodeOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        String decodedPath = java.net.URLDecoder.decode(filmOptional.get().getFilmLocation(), StandardCharsets.UTF_8);
+        String decodedPath = java.net.URLDecoder.decode(episodeOptional.get().getEpisodeLocation(), StandardCharsets.UTF_8);
         System.out.println(decodedPath);
         File videoFile = new File(decodedPath);
 
@@ -92,14 +94,5 @@ public class VideoMovieController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-    }
-
-
-
-
-    private Resource getResourceFromFile(File file, long start, long length) throws IOException {
-        InputStream inputStream = new FileInputStream(file);
-        inputStream.skip(start);
-        return new InputStreamResource(inputStream);
     }
 }
