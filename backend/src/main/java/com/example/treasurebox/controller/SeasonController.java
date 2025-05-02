@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -71,5 +72,11 @@ public class SeasonController {
         }
         seasonRepository.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/by-series/{seriesId}")
+    public ResponseEntity<?> getSeasonsBySeriesId(@PathVariable Long seriesId) {
+        List<Season> seasons = seasonRepository.findBySeriesId(seriesId);
+        return ResponseEntity.ok(seasons);
     }
 }

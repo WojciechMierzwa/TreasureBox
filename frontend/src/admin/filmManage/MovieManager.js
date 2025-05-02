@@ -11,7 +11,7 @@ function MovieManager() {
   useEffect(() => {
     const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS;
 
-    fetch(`${backendAddress}/api/films?mediaType=Movie`)
+    fetch(`${backendAddress}/api/films`)
       .then(res => res.json())
       .then(data => setMovies(data))
       .catch(err => console.error('Fetch error:', err));
@@ -28,7 +28,7 @@ function MovieManager() {
   );
 
   const handleEdit = (id) => {
-    navigate(`/update-film/${id}`);
+    navigate(`/update-movie/${id}`);
   };
 
   const handleDelete = (id) => {
@@ -61,6 +61,12 @@ function MovieManager() {
           setCurrentPage(1);
         }}
       />
+      <button
+      onClick={() => navigate('/create-movie')}
+      className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+    >
+      Create Movie
+    </button>
 
       <div className="space-y-4">
         {paginatedMovies.map(movie => (

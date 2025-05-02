@@ -2,6 +2,7 @@ package com.example.treasurebox.controller;
 
 import com.example.treasurebox.model.User;
 import com.example.treasurebox.model.UserEpisode;
+import com.example.treasurebox.model.UserFilm;
 import com.example.treasurebox.repository.UserEpisodeRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ public class UserEpisodeController {
 
         return userEpisodeRepository.findAll();
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<Object> getUserEpisodeById(@PathVariable Long id) {
         Optional<UserEpisode> optional = userEpisodeRepository.findById(id);
@@ -55,4 +57,15 @@ public class UserEpisodeController {
         UserEpisode saved = userEpisodeRepository.save(userEpisode);
         return ResponseEntity.ok(Map.of("success", true, "message", "User-Episode updated", "id", saved.getId()));
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<?> getUserEpisodesByUserId(@PathVariable Long userId) {
+        List<UserEpisode> userEpisodes = userEpisodeRepository.findByAppUserId(userId);
+        if (userEpisodes.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("success", false, "message", "No episodes found for this user"));
+        }
+        return ResponseEntity.ok(userEpisodes);
+    }
+
 }

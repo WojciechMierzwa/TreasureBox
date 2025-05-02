@@ -10,7 +10,7 @@ DROP TABLE IF EXISTS app_user;
 
 -- Tabela użytkowników
 CREATE TABLE app_user (
-    id SERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY UNIQUE,
     role TEXT NOT NULL DEFAULT 'user',
     name TEXT NOT NULL,
     password TEXT NOT NULL,
@@ -22,7 +22,6 @@ CREATE TABLE app_user (
 CREATE TABLE film (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
-    duration INTEGER NOT NULL,
     film_location TEXT NOT NULL,
     has_captions BOOLEAN NOT NULL,
     captions_location TEXT,
@@ -44,18 +43,19 @@ CREATE TABLE app_user_series (
     id SERIAL PRIMARY KEY,
     series_id INTEGER NOT NULL,
     app_user_id INTEGER NOT NULL,
-    FOREIGN KEY (series_id) REFERENCES series(id) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    FOREIGN KEY (app_user_id) REFERENCES app_user(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+    FOREIGN KEY (series_id) REFERENCES series(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (app_user_id) REFERENCES app_user(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- Tabela relacji użytkownik-film
 CREATE TABLE app_user_film (
     id SERIAL PRIMARY KEY,
     time_watched INTEGER,
+	user_state TEXT DEFAULT 'watching' NOT NULL,
     app_user_id INTEGER NOT NULL,
     film_id INTEGER NOT NULL,
-    FOREIGN KEY (app_user_id) REFERENCES app_user(id) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    FOREIGN KEY (film_id) REFERENCES film(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+    FOREIGN KEY (app_user_id) REFERENCES app_user(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (film_id) REFERENCES film(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- Tabela sezonów
@@ -63,21 +63,19 @@ CREATE TABLE season (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     series_id INTEGER NOT NULL,
-    FOREIGN KEY (series_id) REFERENCES series(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+    FOREIGN KEY (series_id) REFERENCES series(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- Tabela odcinków
 CREATE TABLE episode (
     id SERIAL PRIMARY KEY,
-    season_number INTEGER NOT NULL,
     episode_number INTEGER NOT NULL,
     name TEXT,
-    duration INTEGER,
     episode_location TEXT NOT NULL,
     has_captions BOOLEAN NOT NULL,
     captions_location TEXT,
     season_id INTEGER NOT NULL,
-    FOREIGN KEY (season_id) REFERENCES season(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+    FOREIGN KEY (season_id) REFERENCES season(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- Tabela relacji użytkownik-odcinek
@@ -86,6 +84,7 @@ CREATE TABLE app_user_episode (
     app_user_id INTEGER NOT NULL,
     episode_id INTEGER NOT NULL,
     time_watched INTEGER,
-    FOREIGN KEY (app_user_id) REFERENCES app_user(id) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    FOREIGN KEY (episode_id) REFERENCES episode(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+	user_state TEXT DEFAULT 'watching' NOT NULL,
+    FOREIGN KEY (app_user_id) REFERENCES app_user(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (episode_id) REFERENCES episode(id) ON DELETE CASCADE ON UPDATE CASCADE
 );

@@ -19,8 +19,6 @@ public class Episode {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "duration")
-    private Integer duration;
 
     @Column(name = "episode_location", nullable = false)
     private String episodeLocation;
@@ -68,13 +66,6 @@ public class Episode {
         this.name = name;
     }
 
-    public Integer getDuration() {
-        return duration;
-    }
-
-    public void setDuration(Integer duration) {
-        this.duration = duration;
-    }
 
     public String getEpisodeLocation() {
         return episodeLocation;

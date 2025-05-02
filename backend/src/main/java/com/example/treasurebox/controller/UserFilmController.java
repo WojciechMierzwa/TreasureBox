@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -20,13 +21,13 @@ public class UserFilmController {
         this.userFilmRepository = userFilmRepository;
     }
 
-    // Get all user-film relationships
+
     @GetMapping
     public ResponseEntity<?> getAllUserFilms() {
         return ResponseEntity.ok(userFilmRepository.findAll());
     }
 
-    // Get a specific user-film relationship by id
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserFilmById(@PathVariable Long id) {
         Optional<UserFilm> userFilm = userFilmRepository.findById(id);
@@ -53,5 +54,15 @@ public class UserFilmController {
         }
         UserFilm savedUserFilm = userFilmRepository.save(userFilm);
         return ResponseEntity.ok(Map.of("success", true, "message", "User-Film relationship updated", "id", savedUserFilm.getId()));
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<?> getUserFilmsByUserId(@PathVariable Long userId) {
+        List<UserFilm> userFilms = userFilmRepository.findByAppUserId(userId);
+        if (userFilms.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("success", false, "message", "No films found for this user"));
+        }
+        return ResponseEntity.ok(userFilms);
     }
 }

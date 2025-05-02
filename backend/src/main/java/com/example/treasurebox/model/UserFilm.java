@@ -15,11 +15,11 @@ public class UserFilm {
 
     @ManyToOne
     @JoinColumn(name = "app_user_id", referencedColumnName = "id", nullable = false)
-    private User appUser;  // Zakładając, że masz klasę User
+    private User appUser;
 
     @ManyToOne
     @JoinColumn(name = "film_id", referencedColumnName = "id", nullable = false)
-    private Film film;  // Zakładając, że masz klasę Film
+    private Film film;
 
     // Gettery i Settery
     public Long getId() {
