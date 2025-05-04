@@ -130,14 +130,14 @@ function UpdateEpisode() {
         if (seriesId) {
           navigate(`/view-series/${seriesId}`);
         } else {
-          // Fallback navigation if no seriesId is available
-          navigate('/'); // or wherever appropriate
+          
+          navigate('/'); 
         }
       })
       .catch(err => console.error('Update error:', err));
   };
 
-  // Debug section
+  
   const renderDebugInfo = () => (
     <div className="p-4 mb-4 bg-gray-100 border rounded">
       <h3 className="font-bold">Debug Information</h3>

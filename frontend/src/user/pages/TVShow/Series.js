@@ -29,7 +29,7 @@ function Series() {
             className="m-4"
             onClick={() => navigate(`/Series/${series.id}`)} 
           >
-            <Block name={series.name} genre={series.genre} /> 
+            <Block name={series.name} genre={series.genre} picture={series.picture} /> 
           </div>
         ))
       )}

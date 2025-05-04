@@ -20,33 +20,56 @@ function Serie() {
       .then(data => setEpisodes(data))
       .catch(err => console.error('Error fetching episodes:', err));
   }, [backendAddress]);
+  
 
   if (!serie) return <p>Loading series details...</p>;
 
   const filteredEpisodes = episodes.filter(ep => ep.seriesName === serie.name);
+  console.log(episodes);
+  const groupedBySeason = filteredEpisodes.reduce((acc, episode) => {
+    const season = episode.seasonName || 'Unknown Season';
+    if (!acc[season]) acc[season] = [];
+    acc[season].push(episode);
+    return acc;
+  }, {});
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-4">{serie.name}</h1>
-      <p className="text-lg mb-2">Genre: {serie.genre}</p>
-      <p className="text-lg mb-2">Seasons: {serie.seasonCount}</p>
-      <p className="text-lg mb-2">Episodes count: {serie.episodesCount}</p>
+    <div className="p-8 max-w-4xl mx-auto">
+      <h1 className="text-4xl font-bold mb-4 text-gray-800">{serie.name}</h1>
+      <div className="text-gray-700 mb-6 space-y-1">
+        <p><strong>Genre:</strong> {serie.genre}</p>
+        <p><strong>Seasons:</strong> {serie.seasonCount}</p>
+        <p><strong>Total Episodes:</strong> {serie.episodesCount}</p>
+      </div>
 
-      <h2 className="text-2xl font-semibold mt-6 mb-2">Episodes:</h2>
-      <ul className="space-y-2">
-        {filteredEpisodes.map(ep => (
-          <li key={ep.episodeId}>
-  
-  <Link
-  to={`/watch/episode/?id=${ep.episodeId}`}
-  className="text-blue-600 hover:underline"
->
-              Season: {ep.seasonName} – Episode {ep.episodeNumber}
-            </Link>
-          </li>
-        ))}
-        {filteredEpisodes.length === 0 && <p>No episodes found for this series.</p>}
-      </ul>
+      <h2 className="text-3xl font-semibold text-gray-900 mb-6 border-b pb-2">Episodes</h2>
+
+      {Object.keys(groupedBySeason).map(season => (
+        <div key={season} className="mb-8">
+          <h3 className="text-2xl font-semibold text-blue-600 mb-3 border-l-4 pl-3 border-blue-400 bg-blue-50 py-1">
+            {season}
+          </h3>
+          <ol className="space-y-4">
+            {groupedBySeason[season].map(ep => (
+              <li
+                key={ep.episodeId}
+                className="bg-white shadow-md rounded-lg p-4 border hover:shadow-lg transition"
+              >
+                <Link
+                  to={`/watch/episode/?id=${ep.episodeId}`}
+                  className="text-lg text-blue-700 font-medium hover:underline"
+                >
+                  Episode {ep.episodeNumber}: {ep.episodeName}
+                </Link>
+              </li>
+            ))}
+          </ol>
+        </div>
+      ))}
+
+      {filteredEpisodes.length === 0 && (
+        <p className="text-red-500 mt-4">No episodes found for this series.</p>
+      )}
     </div>
   );
 }
