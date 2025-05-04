@@ -25,6 +25,7 @@ import UpdateEpisode from './admin/seriesManage/episodeManage/UpdateEpisode';
 import CreateSeason from './admin/seriesManage/seasonManage/CreateSeason';
 import UpdateSeason from './admin/seriesManage/seasonManage/UpdateSeason';
 import ManageEpisodes from './admin/seriesManage/episodeManage/ManageEpisodes';
+import CreateSeries from './admin/seriesManage/CreateSeries';
 
 function AppLayout() {
   const location = useLocation();
@@ -56,6 +57,7 @@ function AppContent() {
         
         {/* CRUD Series*/}
         <Route path="/SeriesManager" element={<SeriesManager />} />
+        <Route path="/create-series" element={<CreateSeries />} />
         <Route path="/view-series/:id" element={<ViewSeries />} />
         <Route path="/update-series/:id" element={<UpdateSerie />} />
 

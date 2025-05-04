@@ -45,7 +45,7 @@ function SeriesManager() {
     }
   };
 
-  // Poprawione przekierowanie do zarządzania odcinkami
+
   const viewSerie = (id) => {
     navigate(`/view-series/${id}`);
   };
@@ -63,6 +63,12 @@ function SeriesManager() {
           setCurrentPage(1);
         }}
       />
+      <button
+      onClick={() => navigate('/create-series')}
+      className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+    >
+      Create Series
+    </button>
       <div className="space-y-4">
         {paginatedMovies.map(movie => (
           <div

@@ -7,10 +7,12 @@ function MyList() {
   const { id } = useParams();
 
   return (
-    <div>
+    <div className="flex flex-col items-center px-4">
       <h1 className="text-2xl font-bold text-center mb-6">My Watchlist</h1>
-      <MoviesUserList />
-      <EpisodesUserList />
+      <div className="w-full max-w-4xl space-y-8">
+        <MoviesUserList />
+        <EpisodesUserList />
+      </div>
     </div>
   );
 }

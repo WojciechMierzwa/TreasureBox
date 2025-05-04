@@ -5,12 +5,14 @@ public class EpisodeListItem {
     private int episodeNumber;
     private String seasonName;
     private String seriesName;
+    private String episodeName;
 
-    public EpisodeListItem(Long episodeId, int episodeNumber, String seasonName, String seriesName) {
+    public EpisodeListItem(Long episodeId, int episodeNumber, String seasonName, String seriesName, String episodeName) {
         this.episodeId = episodeId;
         this.episodeNumber = episodeNumber;
         this.seasonName = seasonName;
         this.seriesName = seriesName;
+        this.episodeName = episodeName;
     }
 
     public Long getEpisodeId() {
@@ -27,5 +29,8 @@ public class EpisodeListItem {
 
     public String getSeriesName() {
         return seriesName;
+    }
+    public String getEpisodeName() {
+        return episodeName;
     }
 }

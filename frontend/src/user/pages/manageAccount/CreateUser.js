@@ -61,7 +61,7 @@ export default function CreateUser() {
         <div className="flex justify-center mb-6">
         <div className="flex justify-center mb-6">
           <img
-            src="/images/logo_placeholder.png"
+            src="/images/cropped_image.png"
             width={100}
             height={100}
             alt="Logo"

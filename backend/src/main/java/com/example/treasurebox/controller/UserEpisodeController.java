@@ -26,6 +26,39 @@ public class UserEpisodeController {
 
         return userEpisodeRepository.findAll();
     }
+    @PostMapping
+    public ResponseEntity<?> createUserEpisode(@RequestBody UserEpisode userEpisode) {
+        try {
+            // Validate required fields
+            if (userEpisode.getAppUser() == null || userEpisode.getAppUser().getId() == null) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("success", false, "message", "User ID is required"));
+            }
+
+            if (userEpisode.getEpisode() == null || userEpisode.getEpisode().getId() == null) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("success", false, "message", "Episode ID is required"));
+            }
+
+            // Set default timeWatched if not provided
+            if (userEpisode.getTimeWatched() == null) {
+                userEpisode.setTimeWatched(0);
+            }
+
+            // Save the record
+            UserEpisode savedEntity = userEpisodeRepository.save(userEpisode);
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(Map.of("success", true,
+                            "message", "User-Episode record created",
+                            "id", savedEntity.getId()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("success", false,
+                            "message", "Failed to create User-Episode record",
+                            "error", e.getMessage()));
+        }
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getUserEpisodeById(@PathVariable Long id) {
