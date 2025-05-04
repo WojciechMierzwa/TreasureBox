@@ -20,6 +20,7 @@ function Movies() {
 
   const handleMovieClick = (id) => {
     navigate(`/watch/movie/?id=${id}`);
+    
   };
 
   return (
