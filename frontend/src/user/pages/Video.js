@@ -24,6 +24,8 @@ function Video({ mode }) {
   const progressUpdateInterval = useRef(null);
   const [userProgressId, setUserProgressId] = useState(null);
   const lastTimeUpdateRef = useRef(0);
+  const [savedTime, setSavedTime] = useState(0);
+  const initializedRef = useRef(false);
 
   const playerRef = useRef(null);
   const containerRef = useRef(null);
@@ -38,34 +40,36 @@ function Video({ mode }) {
     initializationRef.current.started = true;
   
     try {
-      // 1. Określamy endpointy w Twojej oryginalnej konwencji
+      // 1. Sprawdź czy istnieje już rekord dla tego filmu/odcinka
       const checkEndpoint = mode === 'episode' 
         ? `${backendAddress}/api/user-episodes/user/${userId}`
-        : `${backendAddress}/api/user-films/${userId}`;
+        : `${backendAddress}/api/user-films/user/${userId}`; // Upewnij się że backend ma ten endpoint
   
-      // 2. Sprawdzamy istniejące rekordy
       const res = await fetch(checkEndpoint);
       const data = await res.json();
       
-      // 3. Szukamy pasującego rekordu
+      // Szukamy istniejącego rekordu
       const existingRecord = Array.isArray(data) 
-        ? data.find(item => 
-            mode === 'episode' 
-              ? item.episode?.id === parseInt(id)
-              : item.film?.id === parseInt(id)
-        ) 
+        ? data.find(item => {
+            if (mode === 'episode') {
+              return item.episode?.id === parseInt(id);
+            } else {
+              // Dla filmów sprawdzamy film.id
+              return item.film?.id === parseInt(id);
+            }
+          })
         : null;
   
-      // 4. Jeśli znaleziono - używamy istniejącego
       if (existingRecord) {
+        console.log('Znaleziono istniejący rekord:', existingRecord);
         setUserProgressId(existingRecord.id);
-        if (existingRecord.timeWatched && playerRef.current) {
-          playerRef.current.seekTo(existingRecord.timeWatched);
+        if (existingRecord.timeWatched) {
+          setSavedTime(parseFloat(existingRecord.timeWatched));
         }
-        return;
+        return; // Nie tworzymy nowego rekordu jeśli już istnieje
       }
   
-      // 5. Jeśli nie znaleziono - tworzymy nowy rekord
+      // 2. Tylko jeśli rekord nie istnieje - tworzymy nowy
       const createEndpoint = mode === 'episode'
         ? `${backendAddress}/api/user-episodes`
         : `${backendAddress}/api/user-films`;
@@ -92,13 +96,13 @@ function Video({ mode }) {
       setUserProgressId(newRecord.id);
   
     } catch (error) {
-      console.error("Error initializing progress:", error);
+      console.error("Błąd podczas inicjalizacji postępu:", error);
       initializationRef.current.started = false;
     } finally {
       initializationRef.current.completed = true;
     }
   }, [id, userId, mode, backendAddress]);
-  
+
   // Wywołanie z zabezpieczeniem
   useEffect(() => {
     if (id && userId && !initializationRef.current.completed) {
@@ -106,8 +110,27 @@ function Video({ mode }) {
     }
   }, [id, userId, initializeUserProgress]);
 
+  // Dodajemy osobny efekt do obsługi zapisanego czasu po załadowaniu odtwarzacza
+  useEffect(() => {
+    if (savedTime > 0 && playerRef.current && !initializedRef.current) {
+      // Czekamy aż odtwarzacz będzie gotowy
+      const checkPlayerReady = setInterval(() => {
+        if (playerRef.current && playerRef.current.getInternalPlayer()) {
+          clearInterval(checkPlayerReady);
+          // Ustawiamy czas odtwarzania
+          playerRef.current.seekTo(savedTime);
+          // Rozpoczynamy odtwarzanie
+          setPlaying(true);
+          initializedRef.current = true;
+        }
+      }, 500);
+      
+      return () => clearInterval(checkPlayerReady);
+    }
+  }, [savedTime]);
+
   // Function to update user progress
-  const updateUserProgress = async () => {
+  const updateUserProgress = useCallback(async () => {
     if (!userProgressId || !playerRef.current) return;
     
     try {
@@ -120,8 +143,8 @@ function Video({ mode }) {
       const endpoint = mode === 'episode' 
         ? `${backendAddress}/api/user-episodes/${userProgressId}`
         : `${backendAddress}/api/user-films/${userProgressId}`;
-        
-      await fetch(endpoint, {
+          
+      const response = await fetch(endpoint, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -130,32 +153,40 @@ function Video({ mode }) {
           timeWatched: currentTime
         })
       });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
     } catch (error) {
       console.error("Error updating user progress:", error);
     }
-  };
+  }, [userProgressId, mode, backendAddress]);
 
-  // Initialize user progress when component mounts
+  // Set up interval to update progress every 10 seconds when playing
   useEffect(() => {
-    if (id && userId) {
-      initializeUserProgress();
-    }
-  }, [id, userId, mode]);
-
-  // Set up interval to update progress every 10 seconds
-  useEffect(() => {
+    let intervalId;
+    
     if (playing && userProgressId) {
-      progressUpdateInterval.current = setInterval(() => {
+      intervalId = setInterval(() => {
         updateUserProgress();
       }, 10000); // 10 seconds
+      
+      // Update immediately when starting to play
+      updateUserProgress();
     }
-    
+
     return () => {
-      if (progressUpdateInterval.current) {
-        clearInterval(progressUpdateInterval.current);
+      if (intervalId) {
+        clearInterval(intervalId);
       }
     };
-  }, [playing, userProgressId]);
+  }, [playing, userProgressId, updateUserProgress]);
+
+  // Update progress when seeking or changing time
+  const handleTimeChange = useCallback((newTime) => {
+    playerRef.current.seekTo(newTime);
+    updateUserProgress();
+  }, [updateUserProgress]);
 
   // Update progress when video is paused or component unmounts
   useEffect(() => {
@@ -164,7 +195,7 @@ function Video({ mode }) {
         updateUserProgress();
       }
     };
-  }, [userProgressId]);
+  }, [userProgressId, updateUserProgress]);
 
   useEffect(() => {
     const resetIdleTimer = () => {
