@@ -38,6 +38,39 @@ public class UserFilmController {
                     .body(Map.of("success", false, "message", "User-Film relationship not found"));
         }
     }
+    @PostMapping
+    public ResponseEntity<?> createUserFilm(@RequestBody UserFilm userFilm) {
+        try {
+            // Validate required fields
+            if (userFilm.getAppUser() == null || userFilm.getAppUser().getId() == null) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("success", false, "message", "User ID is required"));
+            }
+
+            if (userFilm.getFilm() == null || userFilm.getFilm().getId() == null) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("success", false, "message", "Film ID is required"));
+            }
+
+            // Set default timeWatched if not provided
+            if (userFilm.getTimeWatched() == null) {
+                userFilm.setTimeWatched(0);
+            }
+
+            // Save the record
+            UserFilm savedEntity = userFilmRepository.save(userFilm);
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(Map.of("success", true,
+                            "message", "User-Film record created",
+                            "id", savedEntity.getId()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("success", false,
+                            "message", "Failed to create User-Film record",
+                            "error", e.getMessage()));
+        }
+    }
 
     // Update the 'time_watched' for a specific user-film relationship
     @PutMapping("/{id}")

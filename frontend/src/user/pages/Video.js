@@ -7,6 +7,7 @@ function Video({ mode }) {
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
   const [userId, setUserId] = useState(localStorage.getItem("userId"));
+  const [endpoint, setEndpoint] = useState();
   console.log(userId);
   const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS;
   const apiUrl = `${backendAddress}/watch/${mode}?id=${id}`;
@@ -33,51 +34,66 @@ function Video({ mode }) {
   });
   
   const initializeUserProgress = useCallback(async () => {
-    // Blokada przed podwójnym wywołaniem
-    if (initializationRef.current.started) return;
+    if (!id || !userId || initializationRef.current.started) return;
     initializationRef.current.started = true;
   
     try {
-      // 1. Sprawdź czy rekord istnieje
-      const checkExisting = async () => {
-        const endpoint = `${backendAddress}/api/user-${mode}s/user/${userId}`;
-        const res = await fetch(endpoint);
-        const data = await res.json();
-        return Array.isArray(data) 
-          ? data.find(item => item[mode]?.id === parseInt(id))
-          : null;
-      };
+      // 1. Określamy endpointy w Twojej oryginalnej konwencji
+      const checkEndpoint = mode === 'episode' 
+        ? `${backendAddress}/api/user-episodes/user/${userId}`
+        : `${backendAddress}/api/user-films/${userId}`;
   
-      const existing = await checkExisting();
+      // 2. Sprawdzamy istniejące rekordy
+      const res = await fetch(checkEndpoint);
+      const data = await res.json();
       
-      // 2. Jeśli istnieje - użyj go
-      if (existing) {
-        setUserProgressId(existing.id);
-        if (existing.timeWatched) {
-          playerRef.current?.seekTo(existing.timeWatched);
+      // 3. Szukamy pasującego rekordu
+      const existingRecord = Array.isArray(data) 
+        ? data.find(item => 
+            mode === 'episode' 
+              ? item.episode?.id === parseInt(id)
+              : item.film?.id === parseInt(id)
+        ) 
+        : null;
+  
+      // 4. Jeśli znaleziono - używamy istniejącego
+      if (existingRecord) {
+        setUserProgressId(existingRecord.id);
+        if (existingRecord.timeWatched && playerRef.current) {
+          playerRef.current.seekTo(existingRecord.timeWatched);
         }
         return;
       }
   
-      // 3. Jeśli nie istnieje - stwórz nowy
-      const createRes = await fetch(`${backendAddress}/api/user-${mode}s`, {
+      // 5. Jeśli nie znaleziono - tworzymy nowy rekord
+      const createEndpoint = mode === 'episode'
+        ? `${backendAddress}/api/user-episodes`
+        : `${backendAddress}/api/user-films`;
+  
+      const body = mode === 'episode'
+        ? {
+            appUser: { id: parseInt(userId) },
+            episode: { id: parseInt(id) },
+            timeWatched: 0
+          }
+        : {
+            appUser: { id: parseInt(userId) },
+            film: { id: parseInt(id) },
+            timeWatched: 0
+          };
+  
+      const createRes = await fetch(createEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          appUser: { id: parseInt(userId) },
-          [mode]: { id: parseInt(id) },
-          timeWatched: 0
-        })
+        body: JSON.stringify(body)
       });
   
-      if (!createRes.ok) throw new Error('Create failed');
-      
       const newRecord = await createRes.json();
       setUserProgressId(newRecord.id);
-      
+  
     } catch (error) {
-      console.error("Błąd inicjalizacji:", error);
-      initializationRef.current.started = false; // Reset w przypadku błędu
+      console.error("Error initializing progress:", error);
+      initializationRef.current.started = false;
     } finally {
       initializationRef.current.completed = true;
     }
