@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import ReactPlayer from 'react-player';
 import { Volume2, VolumeX, Play, Pause, SkipForward, SkipBack, Maximize } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
@@ -6,7 +6,8 @@ import { useSearchParams } from 'react-router-dom';
 function Video({ mode }) {
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
-
+  const [userId, setUserId] = useState(localStorage.getItem("userId"));
+  console.log(userId);
   const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS;
   const apiUrl = `${backendAddress}/watch/${mode}?id=${id}`;
   const [playing, setPlaying] = useState(false);
@@ -19,6 +20,135 @@ function Video({ mode }) {
   const hideVolumeSliderTimeout = useRef(null);
   const [showControls, setShowControls] = useState(true);
   const idleTimeout = useRef(null);
+  const progressUpdateInterval = useRef(null);
+  const [userProgressId, setUserProgressId] = useState(null);
+  const lastTimeUpdateRef = useRef(0);
+
+  const playerRef = useRef(null);
+  const containerRef = useRef(null);
+  
+  const initializationRef = useRef({
+    started: false,
+    completed: false,
+  });
+  
+  const initializeUserProgress = useCallback(async () => {
+    // Blokada przed podwójnym wywołaniem
+    if (initializationRef.current.started) return;
+    initializationRef.current.started = true;
+  
+    try {
+      // 1. Sprawdź czy rekord istnieje
+      const checkExisting = async () => {
+        const endpoint = `${backendAddress}/api/user-${mode}s/user/${userId}`;
+        const res = await fetch(endpoint);
+        const data = await res.json();
+        return Array.isArray(data) 
+          ? data.find(item => item[mode]?.id === parseInt(id))
+          : null;
+      };
+  
+      const existing = await checkExisting();
+      
+      // 2. Jeśli istnieje - użyj go
+      if (existing) {
+        setUserProgressId(existing.id);
+        if (existing.timeWatched) {
+          playerRef.current?.seekTo(existing.timeWatched);
+        }
+        return;
+      }
+  
+      // 3. Jeśli nie istnieje - stwórz nowy
+      const createRes = await fetch(`${backendAddress}/api/user-${mode}s`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          appUser: { id: parseInt(userId) },
+          [mode]: { id: parseInt(id) },
+          timeWatched: 0
+        })
+      });
+  
+      if (!createRes.ok) throw new Error('Create failed');
+      
+      const newRecord = await createRes.json();
+      setUserProgressId(newRecord.id);
+      
+    } catch (error) {
+      console.error("Błąd inicjalizacji:", error);
+      initializationRef.current.started = false; // Reset w przypadku błędu
+    } finally {
+      initializationRef.current.completed = true;
+    }
+  }, [id, userId, mode, backendAddress]);
+  
+  // Wywołanie z zabezpieczeniem
+  useEffect(() => {
+    if (id && userId && !initializationRef.current.completed) {
+      initializeUserProgress();
+    }
+  }, [id, userId, initializeUserProgress]);
+
+  // Function to update user progress
+  const updateUserProgress = async () => {
+    if (!userProgressId || !playerRef.current) return;
+    
+    try {
+      const currentTime = Math.floor(playerRef.current.getCurrentTime());
+      
+      // Only update if time has changed by at least 1 second
+      if (currentTime === lastTimeUpdateRef.current) return;
+      lastTimeUpdateRef.current = currentTime;
+      
+      const endpoint = mode === 'episode' 
+        ? `${backendAddress}/api/user-episodes/${userProgressId}`
+        : `${backendAddress}/api/user-films/${userProgressId}`;
+        
+      await fetch(endpoint, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          timeWatched: currentTime
+        })
+      });
+    } catch (error) {
+      console.error("Error updating user progress:", error);
+    }
+  };
+
+  // Initialize user progress when component mounts
+  useEffect(() => {
+    if (id && userId) {
+      initializeUserProgress();
+    }
+  }, [id, userId, mode]);
+
+  // Set up interval to update progress every 10 seconds
+  useEffect(() => {
+    if (playing && userProgressId) {
+      progressUpdateInterval.current = setInterval(() => {
+        updateUserProgress();
+      }, 10000); // 10 seconds
+    }
+    
+    return () => {
+      if (progressUpdateInterval.current) {
+        clearInterval(progressUpdateInterval.current);
+      }
+    };
+  }, [playing, userProgressId]);
+
+  // Update progress when video is paused or component unmounts
+  useEffect(() => {
+    return () => {
+      if (userProgressId && playerRef.current) {
+        updateUserProgress();
+      }
+    };
+  }, [userProgressId]);
 
   useEffect(() => {
     const resetIdleTimer = () => {
@@ -42,10 +172,6 @@ function Video({ mode }) {
     };
   }, []);
   
-
-  const playerRef = useRef(null);
-  const containerRef = useRef(null);
-  
   const handlePlayPause = () => {
     setPlaying(!playing);
   };
@@ -62,16 +188,31 @@ function Video({ mode }) {
     const bounds = e.currentTarget.getBoundingClientRect();
     const seekPos = (e.clientX - bounds.left) / bounds.width;
     playerRef.current.seekTo(seekPos);
+    
+    // Also update the backend immediately after seeking
+    setTimeout(() => {
+      updateUserProgress();
+    }, 500);
   };
   
   const handleBackward = () => {
     const currentTime = playerRef.current.getCurrentTime();
     playerRef.current.seekTo(Math.max(0, currentTime - 15));
+    
+    // Update progress after seeking
+    setTimeout(() => {
+      updateUserProgress();
+    }, 500);
   };
   
   const handleForward = () => {
     const currentTime = playerRef.current.getCurrentTime();
     playerRef.current.seekTo(Math.min(duration, currentTime + 15));
+    
+    // Update progress after seeking
+    setTimeout(() => {
+      updateUserProgress();
+    }, 500);
   };
   
   const handleFullscreen = () => {
