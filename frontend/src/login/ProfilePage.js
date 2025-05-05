@@ -23,12 +23,12 @@ function ProfilePage() {
   }
 
   function handleUserSelection(user) {
-    // Pass `requireCredentials` to ProfilePage directly and navigate accordingly
+    
     if (user.requireCredentials) {
-      // User requires credentials -> navigate to LoginPage
+      
       navigate('/LoginPage', { state: { user: user, requireCredentials: true } });
     } else {
-      // User does not require credentials -> navigate to Hub
+      
       navigate('/LoginPage', { state: { user: user, requireCredentials: false } });
     }
   }

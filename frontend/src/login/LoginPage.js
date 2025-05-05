@@ -4,8 +4,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function LoginPage() {
   const location = useLocation();
-  const user = location.state?.user; // Get user info from the passed state
-  const requireCredentials = location.state?.requireCredentials; // Get the requireCredentials flag
+  const user = location.state?.user; 
+  const requireCredentials = location.state?.requireCredentials; 
   
   const [name, setName] = useState(user?.name || '');
   const [password, setPassword] = useState('');

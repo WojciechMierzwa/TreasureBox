@@ -34,26 +34,26 @@ function EpisodesUserList() {
       });
   }, [id]);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div className="text-red-500">Error: {error}</div>;
-  if (userEpisodes.length === 0) return null;
+  if (loading) return <div className="p-8">Loading...</div>;
+  if (error) return <div className="p-8 text-red-500">Error: {error}</div>;
+  if (userEpisodes.length === 0) return <div className="p-8">No episodes found.</div>;
 
   return (
-    <div className="flex flex-col items-center p-8">
-      <h2 className="text-xl font-bold mb-6">Episodes Watching/Watched</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {userEpisodes.map((userEpisode) => (
-          <div
-            key={userEpisode.id}
-            onClick={() => navigate(`/watch/episode?id=${userEpisode.episode.id}`)}
-          >
-            <Block
-              name={userEpisode.episode?.name || 'Unknown'}
-              genre={userEpisode.episode?.season?.series?.name || 'Unknown'}
-            />
-          </div>
-        ))}
-      </div>
+    <div className="flex flex-wrap justify-start items-start gap-4 p-8">
+      <h2 className="w-full text-xl font-bold mb-6">Episodes Watching/Watched</h2>
+      {userEpisodes.map((userEpisode) => (
+        <div
+          key={userEpisode.id}
+          className="m-4 cursor-pointer hover:opacity-80 transition-opacity"
+          onClick={() => navigate(`/watch/episode?id=${userEpisode.episode.id}`)}
+        >
+          <Block
+            name={userEpisode.episode?.name || 'Unknown'}
+            genre={userEpisode.episode?.season?.series?.name || 'Unknown'}
+            picture={userEpisode.episode?.picture}
+          />
+        </div>
+      ))}
     </div>
   );
 }
