@@ -11,7 +11,7 @@ function MovieDetail() {
   useEffect(() => {
     const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS;
     
-    fetch(`${backendAddress}/api/video/${id}`)
+    fetch(`${backendAddress}/api/films/${id}`)
       .then(res => res.json())
       .then(data => setMovie(data))
       .catch(err => console.error('Fetch error:', err));
