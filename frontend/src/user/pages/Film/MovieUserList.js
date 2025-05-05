@@ -34,23 +34,26 @@ function MoviesUserList() {
       });
   }, [id]);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div className="text-red-500">Error: {error}</div>;
-  if (userFilms.length === 0) return null;
+  if (loading) return <div className="p-8">Loading...</div>;
+  if (error) return <div className="p-8 text-red-500">Error: {error}</div>;
+  if (userFilms.length === 0) return <div className="p-8">No movies found.</div>;
 
   return (
-    <div className="flex flex-col items-center p-8">
-      <h2 className="text-xl font-bold mb-6">Movies Watching/Watched</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {userFilms.map((userFilm) => (
-          <div key={userFilm.id} onClick={() => navigate(`/watch/movie?id=${userFilm.film.id}`)}>
-            <Block
-              name={userFilm.film?.name || 'Unknown'}
-              genre={userFilm.film?.genre || 'Unknown'}
-            />
-          </div>
-        ))}
-      </div>
+    <div className="flex flex-wrap justify-start items-start gap-4 p-8">
+      <h2 className="w-full text-xl font-bold mb-6">Movies Watching/Watched</h2>
+      {userFilms.map((userFilm) => (
+        <div
+          key={userFilm.id}
+          className="m-4 cursor-pointer hover:opacity-80 transition-opacity"
+          onClick={() => navigate(`/watch/movie?id=${userFilm.film.id}`)}
+        >
+          <Block
+            name={userFilm.film?.name || 'Unknown'}
+            genre={userFilm.film?.genre || 'Unknown'}
+            picture={userFilm.film?.picture}
+          />
+        </div>
+      ))}
     </div>
   );
 }

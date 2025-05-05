@@ -30,7 +30,7 @@ function Movies() {
           className="m-4"
           onClick={() => handleMovieClick(film.id)} 
         >
-          <Block name={film.name} genre={film.genre} />
+          <Block name={film.name} genre={film.genre} picture={film.picture} />
         </div>
       ))}
     </div>

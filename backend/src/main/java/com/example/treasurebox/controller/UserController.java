@@ -1,9 +1,6 @@
 package com.example.treasurebox.controller;
 
-import com.example.treasurebox.dto.user.UpdateRequest;
-import com.example.treasurebox.dto.user.UserCreationRequest;
-import com.example.treasurebox.dto.user.LoginRequest;
-import com.example.treasurebox.dto.user.UserUpdateRequest;
+import com.example.treasurebox.dto.user.*;
 import com.example.treasurebox.model.Film;
 import com.example.treasurebox.model.User;
 import com.example.treasurebox.model.UserFilm;
@@ -29,9 +26,17 @@ public class UserController {
         this.userRepository = userRepository;
     }
     @GetMapping
-    public List<User> getAllUsers() {
+    public List<ProfileRequest> getAllUsersForProfile() {
+        List<User> users = userRepository.findAll();
 
-        return userRepository.findAll();
+        return users.stream().map(user -> {
+            ProfileRequest dto = new ProfileRequest();
+            dto.setId(user.getId().intValue());
+            dto.setName(user.getName());
+            dto.setProfilePicture(user.getProfilePicture());
+            dto.setRequireCredentials(user.isRequireCredentials());
+            return dto;
+        }).toList();
     }
 
     @GetMapping("/{id}")

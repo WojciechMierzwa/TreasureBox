@@ -1,14 +1,13 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import ReactPlayer from 'react-player';
 import { Volume2, VolumeX, Play, Pause, SkipForward, SkipBack, Maximize } from 'lucide-react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 
 function Video({ mode }) {
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
   const [userId, setUserId] = useState(localStorage.getItem("userId"));
   const [endpoint, setEndpoint] = useState();
-  console.log(userId);
   const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS;
   const apiUrl = `${backendAddress}/watch/${mode}?id=${id}`;
   const [playing, setPlaying] = useState(false);
@@ -26,10 +25,13 @@ function Video({ mode }) {
   const lastTimeUpdateRef = useRef(0);
   const [savedTime, setSavedTime] = useState(0);
   const initializedRef = useRef(false);
+  const [seriesId, setSeriesId] = useState(false);
+  
 
+  const [name, setName] = useState();
   const playerRef = useRef(null);
   const containerRef = useRef(null);
-  
+  const navigate = useNavigate();
   const initializationRef = useRef({
     started: false,
     completed: false,
@@ -40,21 +42,21 @@ function Video({ mode }) {
     initializationRef.current.started = true;
   
     try {
-      // 1. Sprawdź czy istnieje już rekord dla tego filmu/odcinka
+
       const checkEndpoint = mode === 'episode' 
         ? `${backendAddress}/api/user-episodes/user/${userId}`
-        : `${backendAddress}/api/user-films/user/${userId}`; // Upewnij się że backend ma ten endpoint
+        : `${backendAddress}/api/user-films/user/${userId}`; 
   
       const res = await fetch(checkEndpoint);
       const data = await res.json();
       
-      // Szukamy istniejącego rekordu
       const existingRecord = Array.isArray(data) 
         ? data.find(item => {
             if (mode === 'episode') {
+              setName(item.episode.name);
               return item.episode?.id === parseInt(id);
             } else {
-              // Dla filmów sprawdzamy film.id
+              setName(item.film.name);
               return item.film?.id === parseInt(id);
             }
           })
@@ -66,10 +68,10 @@ function Video({ mode }) {
         if (existingRecord.timeWatched) {
           setSavedTime(parseFloat(existingRecord.timeWatched));
         }
-        return; // Nie tworzymy nowego rekordu jeśli już istnieje
+        return; 
       }
   
-      // 2. Tylko jeśli rekord nie istnieje - tworzymy nowy
+      
       const createEndpoint = mode === 'episode'
         ? `${backendAddress}/api/user-episodes`
         : `${backendAddress}/api/user-films`;
@@ -103,23 +105,18 @@ function Video({ mode }) {
     }
   }, [id, userId, mode, backendAddress]);
 
-  // Wywołanie z zabezpieczeniem
   useEffect(() => {
     if (id && userId && !initializationRef.current.completed) {
       initializeUserProgress();
     }
   }, [id, userId, initializeUserProgress]);
 
-  // Dodajemy osobny efekt do obsługi zapisanego czasu po załadowaniu odtwarzacza
   useEffect(() => {
     if (savedTime > 0 && playerRef.current && !initializedRef.current) {
-      // Czekamy aż odtwarzacz będzie gotowy
       const checkPlayerReady = setInterval(() => {
         if (playerRef.current && playerRef.current.getInternalPlayer()) {
           clearInterval(checkPlayerReady);
-          // Ustawiamy czas odtwarzania
           playerRef.current.seekTo(savedTime);
-          // Rozpoczynamy odtwarzanie
           setPlaying(true);
           initializedRef.current = true;
         }
@@ -129,14 +126,12 @@ function Video({ mode }) {
     }
   }, [savedTime]);
 
-  // Function to update user progress
   const updateUserProgress = useCallback(async () => {
     if (!userProgressId || !playerRef.current) return;
     
     try {
       const currentTime = Math.floor(playerRef.current.getCurrentTime());
-      
-      // Only update if time has changed by at least 1 second
+  
       if (currentTime === lastTimeUpdateRef.current) return;
       lastTimeUpdateRef.current = currentTime;
       
@@ -162,7 +157,7 @@ function Video({ mode }) {
     }
   }, [userProgressId, mode, backendAddress]);
 
-  // Set up interval to update progress every 10 seconds when playing
+
   useEffect(() => {
     let intervalId;
     
@@ -170,8 +165,7 @@ function Video({ mode }) {
       intervalId = setInterval(() => {
         updateUserProgress();
       }, 10000); // 10 seconds
-      
-      // Update immediately when starting to play
+
       updateUserProgress();
     }
 
@@ -182,13 +176,12 @@ function Video({ mode }) {
     };
   }, [playing, userProgressId, updateUserProgress]);
 
-  // Update progress when seeking or changing time
+
   const handleTimeChange = useCallback((newTime) => {
     playerRef.current.seekTo(newTime);
     updateUserProgress();
   }, [updateUserProgress]);
 
-  // Update progress when video is paused or component unmounts
   useEffect(() => {
     return () => {
       if (userProgressId && playerRef.current) {
@@ -236,7 +229,7 @@ function Video({ mode }) {
     const seekPos = (e.clientX - bounds.left) / bounds.width;
     playerRef.current.seekTo(seekPos);
     
-    // Also update the backend immediately after seeking
+
     setTimeout(() => {
       updateUserProgress();
     }, 500);
@@ -246,7 +239,6 @@ function Video({ mode }) {
     const currentTime = playerRef.current.getCurrentTime();
     playerRef.current.seekTo(Math.max(0, currentTime - 15));
     
-    // Update progress after seeking
     setTimeout(() => {
       updateUserProgress();
     }, 500);
@@ -256,7 +248,6 @@ function Video({ mode }) {
     const currentTime = playerRef.current.getCurrentTime();
     playerRef.current.seekTo(Math.min(duration, currentTime + 15));
     
-    // Update progress after seeking
     setTimeout(() => {
       updateUserProgress();
     }, 500);
@@ -307,13 +298,26 @@ function Video({ mode }) {
     }
     return `${mm}:${ss}`;
   };
+  const goBack = () => {
+    navigate(-1);
+  };
   
+  const markWatched = () =>{
+
+  };
   return (
-    <div 
-      ref={containerRef}
-      className="relative w-full bg-black" 
-      style={{ maxWidth: '60vw', margin: 'auto' }}
-    >
+    
+    <div className="min-h-screen bg-white">
+  <div className="w-full flex flex-col items-center py-6">
+    <h1 className="text-3xl font-bold text-gray-800 mb-2 text-center">{name}</h1>
+   
+  </div>
+
+  <div 
+    ref={containerRef}
+    className="relative bg-black mx-auto"
+    style={{ maxWidth: '60vw' }}
+  >
       <ReactPlayer
         ref={playerRef}
         url={apiUrl}
@@ -415,6 +419,27 @@ function Video({ mode }) {
           </div>
         </div>
       </div>
+      
+    </div>
+    <div className="w-full flex mt-7">
+  <div className="ml-[20%] w-auto">
+    <button 
+      onClick={goBack}
+      className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-xl transition"
+    >
+      Back to Browsing
+    </button>
+  </div>
+  <div className="mr-[20%] w-auto ml-auto">
+    <button 
+      onClick={markWatched}
+      className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-xl transition"
+    >
+      Mark as watched
+    </button>
+  </div>
+</div>
+
     </div>
   );
 }
