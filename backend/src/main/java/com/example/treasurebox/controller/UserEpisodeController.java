@@ -90,6 +90,22 @@ public class UserEpisodeController {
         UserEpisode saved = userEpisodeRepository.save(userEpisode);
         return ResponseEntity.ok(Map.of("success", true, "message", "User-Episode updated", "id", saved.getId()));
     }
+    @PutMapping("/setToWatched/{id}")
+    public ResponseEntity<?> updateUserEpisodeToWatched(@PathVariable Long id) {
+        Optional<UserEpisode> optional = userEpisodeRepository.findById(id);
+        if (optional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("success", false, "message", "User-Episode record not found"));
+        }
+
+        UserEpisode userEpisode = optional.get();
+        userEpisode.setWatched(true);  // Ustawienie na 'watched'
+        UserEpisode saved = userEpisodeRepository.save(userEpisode);  // Zapisanie
+
+        return ResponseEntity.ok(Map.of("success", true, "message", "User-Episode updated", "id", saved.getId()));
+    }
+
+
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<?> getUserEpisodesByUserId(@PathVariable Long userId) {

@@ -51,7 +51,7 @@ CREATE TABLE app_user_series (
 CREATE TABLE app_user_film (
     id SERIAL PRIMARY KEY,
     time_watched INTEGER,
-	user_state TEXT DEFAULT 'watching' NOT NULL,
+	is_watched BOOLEAN DEFAULT FALSE,
     app_user_id INTEGER NOT NULL,
     film_id INTEGER NOT NULL,
     FOREIGN KEY (app_user_id) REFERENCES app_user(id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -83,8 +83,8 @@ CREATE TABLE app_user_episode (
     id SERIAL PRIMARY KEY,
     app_user_id INTEGER NOT NULL,
     episode_id INTEGER NOT NULL,
+	is_watched BOOLEAN DEFAULT FALSE,
     time_watched INTEGER,
-	user_state TEXT DEFAULT 'watching' NOT NULL,
     FOREIGN KEY (app_user_id) REFERENCES app_user(id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (episode_id) REFERENCES episode(id) ON DELETE CASCADE ON UPDATE CASCADE
 );

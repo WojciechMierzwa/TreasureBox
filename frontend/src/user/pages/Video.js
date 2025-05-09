@@ -302,9 +302,33 @@ function Video({ mode }) {
     navigate(-1);
   };
   
-  const markWatched = () =>{
 
-  };
+
+   const markWatched = useCallback(async () => {
+  try {
+    const endpoint =
+      mode === 'episode'
+        ? `${backendAddress}/api/user-episodes/setToWatched/${userProgressId}`
+        : `${backendAddress}/api/user-films/setToWatched/${userProgressId}`;
+
+    const response = await fetch(endpoint, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    console.log('Marked as watched successfully!' + userProgressId);
+  } catch (error) {
+    console.error('Error updating user progress:', error);
+  }
+}, [userProgressId, mode, backendAddress]);
+
+
   return (
     
     <div className="min-h-screen bg-white">

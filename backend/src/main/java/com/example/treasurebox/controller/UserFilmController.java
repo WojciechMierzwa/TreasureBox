@@ -1,5 +1,6 @@
 package com.example.treasurebox.controller;
 
+import com.example.treasurebox.model.UserEpisode;
 import com.example.treasurebox.model.UserFilm;
 import com.example.treasurebox.repository.UserFilmRepository;
 import org.springframework.http.HttpStatus;
@@ -88,6 +89,22 @@ public class UserFilmController {
         UserFilm savedUserFilm = userFilmRepository.save(userFilm);
         return ResponseEntity.ok(Map.of("success", true, "message", "User-Film relationship updated", "id", savedUserFilm.getId()));
     }
+
+    @PutMapping("/setToWatched/{id}")
+    public ResponseEntity<?> updateUserMovieToWatched(@PathVariable Long id) {
+        Optional<UserFilm> optional = userFilmRepository.findById(id);
+        if (optional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("success", false, "message", "User-Film record not found"));
+        }
+
+        UserFilm userFilm = optional.get();
+        userFilm.setWatched(true);
+        UserFilm saved = userFilmRepository.save(userFilm);  
+
+        return ResponseEntity.ok(Map.of("success", true, "message", "User-Film updated", "id", saved.getId()));
+    }
+
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<?> getUserFilmsByUserId(@PathVariable Long userId) {

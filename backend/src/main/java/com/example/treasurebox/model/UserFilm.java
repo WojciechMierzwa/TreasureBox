@@ -13,6 +13,17 @@ public class UserFilm {
     @Column(name = "time_watched")
     private Integer timeWatched;
 
+    @Column(name = "is_watched")
+    private boolean isWatched;
+
+    public boolean isWatched() {
+        return isWatched;
+    }
+
+    public void setWatched(boolean watched) {
+        isWatched = watched;
+    }
+
     @ManyToOne
     @JoinColumn(name = "app_user_id", referencedColumnName = "id", nullable = false)
     private User appUser;
