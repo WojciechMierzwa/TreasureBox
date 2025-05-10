@@ -1,5 +1,6 @@
 package com.example.treasurebox.controller;
 
+import com.example.treasurebox.model.Film;
 import com.example.treasurebox.model.Series;
 import com.example.treasurebox.repository.SeriesRepository;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,23 @@ public class SeriesController {
     public List<Series> getAllSeries() {
         return seriesRepository.findAll();
     }
+
+    @GetMapping("/count")
+    public long getSeriesCount() {
+        return seriesRepository.count();
+    }
+    @GetMapping("/search")
+    public ResponseEntity<?> searchSeries(@RequestParam String query) {
+        List<Series> series = seriesRepository.findByNameContainingIgnoreCase(query);
+
+        if (series.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("success", false, "message", "No series found for the search term."));
+        }
+
+        return ResponseEntity.ok(series);
+    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getSeriesById(@PathVariable Long id) {

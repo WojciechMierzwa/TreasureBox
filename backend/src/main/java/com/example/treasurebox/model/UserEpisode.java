@@ -10,12 +10,24 @@ public class UserEpisode {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "is_watched")
+    private boolean isWatched;
+
+    public boolean isWatched() {
+        return isWatched;
+    }
+
+    public void setWatched(boolean watched) {
+        isWatched = watched;
+    }
+
     @Column(name = "time_watched")
     private Integer timeWatched;
 
     @ManyToOne
     @JoinColumn(name = "app_user_id", nullable = false)
     private User appUser;
+
 
     @ManyToOne
     @JoinColumn(name = "episode_id", nullable = false)

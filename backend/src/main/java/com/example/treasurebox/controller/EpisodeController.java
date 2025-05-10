@@ -26,6 +26,11 @@ public class EpisodeController {
         return ResponseEntity.ok(episodeRepository.findAll());
     }
 
+    @GetMapping("/count")
+    public long getFilmCount() {
+        return episodeRepository.count();
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getEpisodeById(@PathVariable Long id) {
         Optional<Episode> episode = episodeRepository.findById(id);
@@ -54,7 +59,6 @@ public class EpisodeController {
 
         Episode episode = optional.get();
         if (updated.getName() != null) episode.setName(updated.getName());
-        if (updated.getSeasonNumber() != null) episode.setSeasonNumber(updated.getSeasonNumber());
         if (updated.getEpisodeNumber() != null) episode.setEpisodeNumber(updated.getEpisodeNumber());
         if (updated.getEpisodeLocation() != null) episode.setEpisodeLocation(updated.getEpisodeLocation());
         if (updated.getHasCaptions() != null) episode.setHasCaptions(updated.getHasCaptions());

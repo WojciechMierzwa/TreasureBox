@@ -309,7 +309,7 @@ function Video({ mode }) {
     
     <div className="min-h-screen bg-white">
   <div className="w-full flex flex-col items-center py-6">
-    <h1 className="text-3xl font-bold text-gray-800 mb-2 text-center">{name}</h1>
+
    
   </div>
 

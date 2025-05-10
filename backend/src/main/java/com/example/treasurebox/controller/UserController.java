@@ -1,30 +1,29 @@
 package com.example.treasurebox.controller;
 
 import com.example.treasurebox.dto.user.*;
-import com.example.treasurebox.model.Film;
 import com.example.treasurebox.model.User;
-import com.example.treasurebox.model.UserFilm;
 import com.example.treasurebox.repository.UserRepository;
-import com.example.treasurebox.repository.UserFilmRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
 
 @RestController
 @RequestMapping("/api/users")
 @CrossOrigin(origins = "http://localhost:3000")
-//@CrossOrigin(origins = "${Frontend_Address}")
 public class UserController {
 
     private final UserRepository userRepository;
-    private static final Map<String, Long> sessionTokens = new ConcurrentHashMap<>();
-    public UserController(UserRepository userRepository, UserFilmRepository userFilmRepository) {
+    private final PasswordEncoder passwordEncoder;
+
+    public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
+        this.passwordEncoder = new BCryptPasswordEncoder(); // BCrypt for hashing passwords
     }
+
     @GetMapping
     public List<ProfileRequest> getAllUsersForProfile() {
         List<User> users = userRepository.findAll();
@@ -39,8 +38,13 @@ public class UserController {
         }).toList();
     }
 
+    @GetMapping("/count")
+    public long getUserCount() {
+        return userRepository.count();
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<?> getSeriesById(@PathVariable Long id) {
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
             return ResponseEntity.ok(user.get());
@@ -49,21 +53,27 @@ public class UserController {
                     .body(Map.of("success", false, "message", "User not found"));
         }
     }
+
     @PostMapping("/")
     public ResponseEntity<?> createUser(@RequestBody UserCreationRequest request) {
+        // Check if username already exists
         if (userRepository.existsByName(request.getName())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(Map.of("success", false, "message", "Username already exists"));
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Username already exists"));
         }
 
+        // Create the new user
         User user = new User();
         user.setName(request.getName());
-        user.setPassword(request.getPassword());
+
+        // Hash the password before saving
+        String hashedPassword = passwordEncoder.encode(request.getPassword());
+        user.setPassword(hashedPassword);
+
         user.setRequireCredentials(request.isRequireCredentials());
         user.setRole("user");
         user.setProfilePicture((int)(Math.random() * 4) + 1);
 
+        // Save the user to the repository
         User saved = userRepository.save(user);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
@@ -84,41 +94,33 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User request) {
-        try {
-            Optional<User> optionalUser = userRepository.findById(id);
-            if (optionalUser.isEmpty()) {
-                Map<String, Object> response = new HashMap<>();
-                response.put("success", false);
-                response.put("message", "User not found");
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-            }
-            User user = optionalUser.get();
-
-            if (request.getName() != null && !request.getName().isEmpty()) {
-                user.setName(request.getName());
-            }
-            if (request.getPassword() != null && !request.getPassword().isEmpty()) {
-                user.setPassword(request.getPassword());
-            }
-            user.setRequireCredentials(request.isRequireCredentials());
-            User updatedUser = userRepository.save(user);
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("message", "User updated successfully");
-            response.put("userId", updatedUser.getId());
-            response.put("username", updatedUser.getName());
-            response.put("role", updatedUser.getRole());
-            response.put("profilePicture", updatedUser.getProfilePicture());
-            response.put("requireCredentials", updatedUser.isRequireCredentials());
-
-            return ResponseEntity.ok(response);
-
-        } catch (Exception e) {
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", false);
-            response.put("message", "Error updating user: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("success", false, "message", "User not found"));
         }
+
+        User user = optionalUser.get();
+
+        if (request.getName() != null && !request.getName().isEmpty()) {
+            user.setName(request.getName());
+        }
+        if (request.getPassword() != null && !request.getPassword().isEmpty()) {
+            // Hash the new password if updated
+            String hashedPassword = passwordEncoder.encode(request.getPassword());
+            user.setPassword(hashedPassword);
+        }
+        user.setRequireCredentials(request.isRequireCredentials());
+
+        User updatedUser = userRepository.save(user);
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "User updated successfully",
+                "userId", updatedUser.getId(),
+                "username", updatedUser.getName(),
+                "role", updatedUser.getRole(),
+                "profilePicture", updatedUser.getProfilePicture(),
+                "requireCredentials", updatedUser.isRequireCredentials()
+        ));
     }
 
     @PostMapping("/login")
@@ -131,12 +133,14 @@ public class UserController {
         }
 
         User user = optionalUser.get();
-        if (user.isRequireCredentials() && !request.getPassword().equals(user.getPassword())) {
+
+        // Verify password using BCryptPasswordEncoder
+        if (user.isRequireCredentials() && !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("success", false, "message", "Invalid password"));
         }
-        String token = UUID.randomUUID().toString();
 
+        String token = UUID.randomUUID().toString();
         return ResponseEntity.ok(Map.of(
                 "success", true,
                 "message", "Login successful",
@@ -149,8 +153,3 @@ public class UserController {
         ));
     }
 }
-
-
-
-
-

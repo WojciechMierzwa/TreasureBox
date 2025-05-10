@@ -10,8 +10,6 @@ public class Episode {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "season_number", nullable = false)
-    private Integer seasonNumber;
 
     @Column(name = "episode_number", nullable = false)
     private Integer episodeNumber;
@@ -42,13 +40,7 @@ public class Episode {
         this.id = id;
     }
 
-    public Integer getSeasonNumber() {
-        return seasonNumber;
-    }
 
-    public void setSeasonNumber(Integer seasonNumber) {
-        this.seasonNumber = seasonNumber;
-    }
 
     public Integer getEpisodeNumber() {
         return episodeNumber;

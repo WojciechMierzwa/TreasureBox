@@ -11,8 +11,21 @@ const HubNavbar = () => {
   const signOut = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
+    localStorage.removeItem("profilePicture");
+    localStorage.removeItem("role");
+    localStorage.removeItem("username");
     localStorage.removeItem("username");
     navigate('/');
+  };
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      handleSearch(); 
+    }
+  };
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      navigate(`/Search?query=${encodeURIComponent(searchQuery.trim())}`);
+    }
   };
 
   const goToSettings = () => {
@@ -22,7 +35,7 @@ const HubNavbar = () => {
     <nav className="bg-white border-gray-200 dark:bg-gray-900">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         {/* Logo */}
-        <a href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
+        <a href="/Hub" className="flex items-center space-x-3 rtl:space-x-reverse">
           <img src="/images/treasure_box_icon.svg" className="h-8" alt="Treasure Box" />
           <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Treasure Box</span>
         </a>
@@ -36,6 +49,7 @@ const HubNavbar = () => {
               placeholder="Search..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleKeyPress}
             />
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -70,20 +84,10 @@ const HubNavbar = () => {
                 <span className="block text-sm text-gray-900 dark:text-white">{localStorage.getItem("username")}</span>
               </div>
               <ul className="py-2">
-                <li><a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Dashboard</a></li>
-                <li><button
-                    onClick={goToSettings}
-                    className="block px-5 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                    >
-                    Settings
-                  </button></li>
-                <li>
-                  <button
-                    onClick={signOut}
-                    className="block px-5 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                    >
-                    Sign out
-                  </button>
+                <li><a href="/Dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Dashboard</a></li>
+                <li><a href="/Settings" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Settings</a></li>
+                <li><a onClick={signOut} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</a>
+
                 </li>
               </ul>
             </div>

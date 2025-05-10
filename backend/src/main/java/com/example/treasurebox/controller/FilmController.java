@@ -35,6 +35,23 @@ public class FilmController {
         return filmRepository.findAll();
     }
 
+    @GetMapping("/count")
+    public long getFilmCount() {
+        return filmRepository.count();
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchFilms(@RequestParam String query) {
+        List<Film> films = filmRepository.findByNameContainingIgnoreCase(query);
+
+        if (films.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("success", false, "message", "No films found for the search term."));
+        }
+
+        return ResponseEntity.ok(films);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getSeriesById(@PathVariable Long id) {
         Optional<Film> film = filmRepository.findById(id);

@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - REACT_APP_BACKEND_ADDRESS=${REACT_APP_BACKEND_ADDRESS}
+    ports:
+      - "3000:80"
+    networks:
+      - frontend_network
+    env_file:
+      - ./.env  
+
+networks:
+  frontend_network:
+    driver: bridge

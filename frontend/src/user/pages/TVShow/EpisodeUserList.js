@@ -38,22 +38,51 @@ function EpisodesUserList() {
   if (error) return <div className="p-8 text-red-500">Error: {error}</div>;
   if (userEpisodes.length === 0) return <div className="p-8">No episodes found.</div>;
 
+  // Podziel odcinki na "watching" i "watched"
+  const watchingEpisodes = userEpisodes.filter((userEpisode) => !userEpisode.watched);
+  const watchedEpisodes = userEpisodes.filter((userEpisode) => userEpisode.watched);
+
   return (
     <div className="flex flex-wrap justify-start items-start gap-4 p-8">
-      <h2 className="w-full text-xl font-bold mb-6">Episodes Watching/Watched</h2>
-      {userEpisodes.map((userEpisode) => (
-        <div
-          key={userEpisode.id}
-          className="m-4 cursor-pointer hover:opacity-80 transition-opacity"
-          onClick={() => navigate(`/watch/episode?id=${userEpisode.episode.id}`)}
-        >
-          <Block
-            name={userEpisode.episode?.name || 'Unknown'}
-            genre={userEpisode.episode?.season?.series?.name || 'Unknown'}
-            picture={userEpisode.episode?.picture}
-          />
-        </div>
-      ))}
+
+      <h2 className="w-full text-xl font-bold mb-6">Episodes Watching</h2>
+      {watchingEpisodes.length === 0 ? (
+        <div className="p-8">No episodes are currently being watched.</div>
+      ) : (
+        watchingEpisodes.map((userEpisode) => (
+          <div
+            key={userEpisode.id}
+            className="m-4 cursor-pointer hover:opacity-80 transition-opacity"
+            onClick={() => navigate(`/watch/episode?id=${userEpisode.episode.id}`)}
+          >
+            <Block
+              name={userEpisode.episode?.name || 'Unknown'}
+              genre={userEpisode.episode?.season?.series?.name || 'Unknown'}
+              picture={userEpisode.episode?.picture}
+            />
+          </div>
+        ))
+      )}
+
+
+      {watchedEpisodes.length > 0 && (
+        <>
+          <h2 className="w-full text-xl font-bold mb-6">Episodes Watched</h2>
+          {watchedEpisodes.map((userEpisode) => (
+            <div
+              key={userEpisode.id}
+              className="m-4 cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={() => navigate(`/watch/episode?id=${userEpisode.episode.id}`)}
+            >
+              <Block
+                name={userEpisode.episode?.name || 'Unknown'}
+                genre={userEpisode.episode?.season?.series?.name || 'Unknown'}
+                picture={userEpisode.episode?.picture}
+              />
+            </div>
+          ))}
+        </>
+      )}
     </div>
   );
 }

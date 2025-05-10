@@ -26,6 +26,7 @@ public class UserEpisodeController {
 
         return userEpisodeRepository.findAll();
     }
+
     @PostMapping
     public ResponseEntity<?> createUserEpisode(@RequestBody UserEpisode userEpisode) {
         try {
@@ -73,6 +74,20 @@ public class UserEpisodeController {
         }
     }
 
+    @GetMapping("/user/count/{userId}")
+    public ResponseEntity<?> getNumberUserEpisodesByUserId(@PathVariable Long userId) {
+        List<UserEpisode> userEpisodes = userEpisodeRepository.findByAppUserId(userId);
+        int episodeCount = (userEpisodes != null) ? userEpisodes.size() : 0;
+        int timeWatched = 0;
+        for(UserEpisode episode : userEpisodes){
+            timeWatched += episode.getTimeWatched();
+        }
+        Map<String, Integer> response = new HashMap<>();
+        response.put("episodeCount", episodeCount);
+        response.put("timeWatched", timeWatched);
+        return ResponseEntity.ok(response);
+    }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUserEpisode(@PathVariable Long id, @RequestBody UserEpisode update) {
@@ -90,6 +105,22 @@ public class UserEpisodeController {
         UserEpisode saved = userEpisodeRepository.save(userEpisode);
         return ResponseEntity.ok(Map.of("success", true, "message", "User-Episode updated", "id", saved.getId()));
     }
+    @PutMapping("/setToWatched/{id}")
+    public ResponseEntity<?> updateUserEpisodeToWatched(@PathVariable Long id) {
+        Optional<UserEpisode> optional = userEpisodeRepository.findById(id);
+        if (optional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("success", false, "message", "User-Episode record not found"));
+        }
+
+        UserEpisode userEpisode = optional.get();
+        userEpisode.setWatched(true);  // Ustawienie na 'watched'
+        UserEpisode saved = userEpisodeRepository.save(userEpisode);  // Zapisanie
+
+        return ResponseEntity.ok(Map.of("success", true, "message", "User-Episode updated", "id", saved.getId()));
+    }
+
+
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<?> getUserEpisodesByUserId(@PathVariable Long userId) {

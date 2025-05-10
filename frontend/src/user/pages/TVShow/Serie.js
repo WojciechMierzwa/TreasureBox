@@ -25,7 +25,6 @@ function Serie() {
   if (!serie) return <p>Loading series details...</p>;
 
   const filteredEpisodes = episodes.filter(ep => ep.seriesName === serie.name);
-  console.log(episodes);
   const groupedBySeason = filteredEpisodes.reduce((acc, episode) => {
     const season = episode.seasonName || 'Unknown Season';
     if (!acc[season]) acc[season] = [];
