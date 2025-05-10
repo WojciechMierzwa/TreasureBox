@@ -26,6 +26,7 @@ public class UserEpisodeController {
 
         return userEpisodeRepository.findAll();
     }
+
     @PostMapping
     public ResponseEntity<?> createUserEpisode(@RequestBody UserEpisode userEpisode) {
         try {
@@ -71,6 +72,20 @@ public class UserEpisodeController {
             error.put("message", "Episode not found");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
         }
+    }
+
+    @GetMapping("/user/count/{userId}")
+    public ResponseEntity<?> getNumberUserEpisodesByUserId(@PathVariable Long userId) {
+        List<UserEpisode> userEpisodes = userEpisodeRepository.findByAppUserId(userId);
+        int episodeCount = (userEpisodes != null) ? userEpisodes.size() : 0;
+        int timeWatched = 0;
+        for(UserEpisode episode : userEpisodes){
+            timeWatched += episode.getTimeWatched();
+        }
+        Map<String, Integer> response = new HashMap<>();
+        response.put("episodeCount", episodeCount);
+        response.put("timeWatched", timeWatched);
+        return ResponseEntity.ok(response);
     }
 
 

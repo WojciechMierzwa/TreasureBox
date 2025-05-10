@@ -1,5 +1,6 @@
 package com.example.treasurebox.controller;
 
+import com.example.treasurebox.model.User;
 import com.example.treasurebox.model.UserEpisode;
 import com.example.treasurebox.model.UserFilm;
 import com.example.treasurebox.repository.UserFilmRepository;
@@ -7,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -114,5 +116,19 @@ public class UserFilmController {
                     .body(Map.of("success", false, "message", "No films found for this user"));
         }
         return ResponseEntity.ok(userFilms);
+    }
+
+    @GetMapping("/user/count/{userId}")
+    public ResponseEntity<?> getNumberUserFilmsByUserId(@PathVariable Long userId) {
+        List<UserFilm> userFilms = userFilmRepository.findByAppUserId(userId);
+        int filmCount = (userFilms != null) ? userFilms.size() : 0;
+        int filmTimeWatched = 0;
+        for(UserFilm film : userFilms){
+            filmTimeWatched += film.getTimeWatched();
+        }
+        Map<String, Integer> response = new HashMap<>();
+        response.put("filmCount", filmCount);
+        response.put("timeWatched", filmTimeWatched);
+        return ResponseEntity.ok(response);
     }
 }

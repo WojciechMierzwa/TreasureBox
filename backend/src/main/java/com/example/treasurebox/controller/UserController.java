@@ -38,6 +38,11 @@ public class UserController {
             return dto;
         }).toList();
     }
+    @GetMapping("/count")
+    public long getUserCount() {
+        return userRepository.count();
+    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getSeriesById(@PathVariable Long id) {

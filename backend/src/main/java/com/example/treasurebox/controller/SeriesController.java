@@ -24,6 +24,12 @@ public class SeriesController {
         return seriesRepository.findAll();
     }
 
+    @GetMapping("/count")
+    public long getSeriesCount() {
+        return seriesRepository.count();
+    }
+
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getSeriesById(@PathVariable Long id) {
         Optional<Series> series = seriesRepository.findById(id);

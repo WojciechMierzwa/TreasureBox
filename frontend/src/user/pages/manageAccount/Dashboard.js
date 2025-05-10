@@ -11,54 +11,50 @@ function Dashboard() {
   const name = localStorage.getItem("username");
 
   useEffect(() => {
-    if (!backendAddress || !id) return;
-    
+    if (!backendAddress || !id) return; 
+
     const fetchCounts = async () => {
-      setIsLoading(true);
+      setIsLoading(true); 
       try {
         const [filmsRes, episodesRes] = await Promise.all([
-          fetch(`${backendAddress}/api/user-films/user/${id}`),
-          fetch(`${backendAddress}/api/user-episodes/user/${id}`),
+          fetch(`${backendAddress}/api/user-films/user/count/${id}`),
+          fetch(`${backendAddress}/api/user-episodes/user/count/${id}`)
         ]);
-        
         if (!filmsRes.ok || !episodesRes.ok) {
           throw new Error("One of the fetch requests failed");
         }
-        
         const [films, episodes] = await Promise.all([
           filmsRes.json(),
-          episodesRes.json(),
+          episodesRes.json()
         ]);
-        
-        setNumberOfMovies(films.length);
-        setNumberOfEpisodes(episodes.length);
-        
-        const filmTime = films.reduce((acc, film) => acc + (film.timeWatched || 0), 0);
-        const episodeTime = episodes.reduce((acc, episode) => acc + (episode.timeWatched || 0), 0);
-        setTotalTimeWatched(filmTime + episodeTime);
+
+        const totalFilmTimeWatched = films.timeWatched || 0;
+        const totalEpisodeTimeWatched = episodes.timeWatched || 0;
+        const totalTimeWatched = totalFilmTimeWatched + totalEpisodeTimeWatched;
+
+        setNumberOfMovies(films.episodeCount || 0); 
+        setNumberOfEpisodes(episodes.episodeCount || 0); 
+        setTotalTimeWatched(totalTimeWatched); 
+
       } catch (error) {
-        console.error('Error fetching counts:', error);
+        console.error("Error fetching counts:", error);
       } finally {
-        setIsLoading(false);
+        setIsLoading(false); 
       }
     };
-    
-    fetchCounts();
-  }, [backendAddress, id]);
 
-  const formatTime = (minutes) => {
-    const hrs = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    return `${hrs}h ${mins}m`;
+    fetchCounts(); 
+  }, [backendAddress, id]); 
+
+  const formatTime = (seconds) => {
+    const totalMinutes = Math.floor(seconds / 60);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    return `${hours}h ${minutes}m`;
   };
 
-  // Calculate percentage of day spent watching
-  const percentageOfDay = (minutes) => {
-    const minutesInDay = 24 * 60;
-    return Math.min(100, ((minutes / minutesInDay) * 100).toFixed(1));
-  };
 
-  // Loading state component
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -74,7 +70,7 @@ function Dashboard() {
     <div className="p-6 max-w-6xl mx-auto  min-h-screen">
       <div className="mb-8 text-center">
         <h1 className="text-4xl font-bold text-gray-800 mb-2">Hello 👋 {name} </h1>
-        <p className="text-gray-500">Track your viewing journey</p>
+        <p className="text-gray-500">Track your stats</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
@@ -86,7 +82,7 @@ function Dashboard() {
           </div>
           <div className="p-6 flex flex-col items-center">
             <p className="text-5xl font-bold text-gray-800 mb-2">{numberOfMovies}</p>
-            <p className="text-gray-500 text-sm">films watched</p>
+            <p className="text-gray-500 text-sm">movies watched</p>
           </div>
         </div>
 

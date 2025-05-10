@@ -10,33 +10,29 @@ function AdminPanel() {
   const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS;
 
   useEffect(() => {
-    const fetchCounts = async () => {
-      try {
-        const [seriesRes, filmRes, episodeRes, userRes] = await Promise.all([
-          fetch(`${backendAddress}/api/series`),
-          fetch(`${backendAddress}/api/films`),
-          fetch(`${backendAddress}/api/episodes`),
-          fetch(`${backendAddress}/api/users`)
-        ]);
+  const fetchCounts = async () => {
+    try {
+      const [seriesResponse, filmResponse, episodeResponse, userResponse] = await Promise.all([
+        fetch(`${backendAddress}/api/series/count`),
+        fetch(`${backendAddress}/api/films/count`),
+        fetch(`${backendAddress}/api/episodes/count`),
+        fetch(`${backendAddress}/api/users/count`)
+      ]);
+      const seriesNumber = await seriesResponse.json();
+      const filmNumber = await filmResponse.json();
+      const episodeNumber = await episodeResponse.json();
+      const userNumber = await userResponse.json();
+      setNumberOfTVSeries(seriesNumber);
+      setNumberOfMovies(filmNumber);
+      setNumberOfEpisodes(episodeNumber);
+      setNumberOfUsers(userNumber);
+    } catch (error) {
+      console.error('Error fetching counts:', error);
+    }
+  };
 
-        const [series, films, episodes, users] = await Promise.all([
-          seriesRes.json(),
-          filmRes.json(),
-          episodeRes.json(),
-          userRes.json()
-        ]);
-
-        setNumberOfTVSeries(series.length);
-        setNumberOfMovies(films.length);
-        setNumberOfEpisodes(episodes.length);
-        setNumberOfUsers(users.length);
-      } catch (error) {
-        console.error('Error fetching counts:', error);
-      }
-    };
-
-    fetchCounts();
-  }, [backendAddress]);
+  fetchCounts();
+}, [backendAddress]);
 
   return (
     <div className="p-16">

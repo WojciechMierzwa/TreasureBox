@@ -35,6 +35,12 @@ public class FilmController {
         return filmRepository.findAll();
     }
 
+    @GetMapping("/count")
+    public long getFilmCount() {
+        return filmRepository.count();
+    }
+
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getSeriesById(@PathVariable Long id) {
         Optional<Film> film = filmRepository.findById(id);

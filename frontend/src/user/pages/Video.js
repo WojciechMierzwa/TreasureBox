@@ -51,25 +51,25 @@ function Video({ mode }) {
       const data = await res.json();
       
       const existingRecord = Array.isArray(data) 
-  ? data.find(item => {
-      return mode === 'episode'
-        ? item.episode?.id === parseInt(id)
-        : item.film?.id === parseInt(id);
-    })
-  : null;
-
-if (existingRecord) {
-  if (mode === 'episode') {
-    setName(existingRecord.episode.name);
-  } else {
-    setName(existingRecord.film.name);
-  }
-  setUserProgressId(existingRecord.id);
-  if (existingRecord.timeWatched) {
-    setSavedTime(parseFloat(existingRecord.timeWatched));
-  }
-}
-
+        ? data.find(item => {
+            if (mode === 'episode') {
+              setName(item.episode.name);
+              return item.episode?.id === parseInt(id);
+            } else {
+              setName(item.film.name);
+              return item.film?.id === parseInt(id);
+            }
+          })
+        : null;
+  
+      if (existingRecord) {
+        console.log('Znaleziono istniejący rekord:', existingRecord);
+        setUserProgressId(existingRecord.id);
+        if (existingRecord.timeWatched) {
+          setSavedTime(parseFloat(existingRecord.timeWatched));
+        }
+        return; 
+      }
   
       
       const createEndpoint = mode === 'episode'
@@ -302,37 +302,14 @@ if (existingRecord) {
     navigate(-1);
   };
   
+  const markWatched = () =>{
 
-
-   const markWatched = useCallback(async () => {
-  try {
-    const endpoint =
-      mode === 'episode'
-        ? `${backendAddress}/api/user-episodes/setToWatched/${userProgressId}`
-        : `${backendAddress}/api/user-films/setToWatched/${userProgressId}`;
-
-    const response = await fetch(endpoint, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-  } catch (error) {
-    console.error('Error updating user progress:', error);
-  }
-}, [userProgressId, mode, backendAddress]);
-
-
+  };
   return (
     
     <div className="min-h-screen bg-white">
   <div className="w-full flex flex-col items-center py-6">
-    <h1 className="text-3xl font-bold text-gray-800 mb-2 text-center">{name}</h1>
+
    
   </div>
 
