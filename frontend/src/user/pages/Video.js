@@ -63,7 +63,7 @@ function Video({ mode }) {
         : null;
   
       if (existingRecord) {
-        console.log('Znaleziono istniejący rekord:', existingRecord);
+    
         setUserProgressId(existingRecord.id);
         if (existingRecord.timeWatched) {
           setSavedTime(parseFloat(existingRecord.timeWatched));
@@ -322,7 +322,6 @@ function Video({ mode }) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    console.log('Marked as watched successfully!' + userProgressId);
   } catch (error) {
     console.error('Error updating user progress:', error);
   }

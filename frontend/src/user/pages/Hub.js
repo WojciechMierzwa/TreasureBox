@@ -42,8 +42,7 @@ function Hub() {
           isMovie: true
         }));
         
-        console.log("Fetched Series:", seriesWithType);
-        console.log("Fetched Movies:", moviesWithType);
+    
         
         // Combine and shuffle
         const combined = [...seriesWithType, ...moviesWithType];

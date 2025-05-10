@@ -12,7 +12,6 @@ function Series() {
     fetch(`${backendAddress}/api/series`)
       .then(res => res.json())
       .then(data => {
-        console.log("Fetched series:", data); 
         setRecords(data); 
       })
       .catch(err => console.error('Fetch error:', err));

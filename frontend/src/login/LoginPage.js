@@ -14,7 +14,6 @@ export default function LoginPage() {
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
   
-  console.log(user);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

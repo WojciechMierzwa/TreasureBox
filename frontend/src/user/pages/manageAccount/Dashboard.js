@@ -8,6 +8,7 @@ function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS;
   const id = localStorage.getItem("userId");
+  const name = localStorage.getItem("username");
 
   useEffect(() => {
     if (!backendAddress || !id) return;
@@ -72,7 +73,7 @@ function Dashboard() {
   return (
     <div className="p-6 max-w-6xl mx-auto  min-h-screen">
       <div className="mb-8 text-center">
-        <h1 className="text-4xl font-bold text-gray-800 mb-2">My Dashboard</h1>
+        <h1 className="text-4xl font-bold text-gray-800 mb-2">Hello 👋 {name} </h1>
         <p className="text-gray-500">Track your viewing journey</p>
       </div>
 

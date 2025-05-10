@@ -12,7 +12,6 @@ function Movies() {
     fetch(`${backendAddress}/api/films`)
       .then(res => res.json())
       .then(data => {
-        console.log("Fetched films:", data); 
         setMovies(data); 
       })
       .catch(err => console.error('Fetch error:', err));

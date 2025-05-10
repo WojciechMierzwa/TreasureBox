@@ -12,7 +12,6 @@ function ProfilePage() {
     fetch(`${backendAddress}/api/users`)
       .then(res => res.json())
       .then(data => {
-        console.log("Fetched users:", data); 
         setUsers(data);
       })
       .catch(err => console.error('Fetch error:', err));

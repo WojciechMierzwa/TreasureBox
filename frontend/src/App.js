@@ -32,6 +32,7 @@ import Dashboard from './user/pages/manageAccount/Dashboard';
 
 function AppLayout() {
   const location = useLocation();
+  const role = localStorage.getItem("role"); 
   const excludedPaths = ["/", "/CreateUser", "/LoginPage"];
 
   return (
