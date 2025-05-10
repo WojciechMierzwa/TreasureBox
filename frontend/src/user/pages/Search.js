@@ -23,35 +23,32 @@ const Search = () => {
 
   const fetchResults = async (query) => {
     setLoading(true);
-    setError(null);  // Clear any previous errors
+    setError(null); 
     try {
-      // Fetch films data
+
       const filmsResponse = await fetch(`${backendAddress}/api/films/search?query=${encodeURIComponent(query)}`);
       const filmsData = await filmsResponse.json();
 
-      // Check if filmsData is an array
       const filmsWithType = Array.isArray(filmsData) ? filmsData.map(item => ({
         ...item,
         isMovie: true
       })) : [];
 
-      // Fetch series data
       const seriesResponse = await fetch(`${backendAddress}/api/series/search?query=${encodeURIComponent(query)}`);
       const seriesData = await seriesResponse.json();
 
-      // Check if seriesData is an array
       const seriesWithType = Array.isArray(seriesData) ? seriesData.map(item => ({
         ...item,
         isMovie: false
       })) : [];
 
-      // Combine films and series
+  
       const combinedRecords = [...filmsWithType, ...seriesWithType];
       
-      // Update records with combined data
+
       setRecords(combinedRecords);
     } catch (err) {
-      // Handle errors
+
       setError('An error occurred while searching.');
       console.error(err);
     } finally {
@@ -61,10 +58,10 @@ const Search = () => {
 
   const handleClick = (id, isMovie) => {
     if (isMovie) {
-      // Navigate to movie detail page
+  
       navigate(`/watch/movie/?id=${id}`);
     } else {
-      // Navigate to series detail page
+ 
       navigate(`/Series/${id}`);
     }
   };

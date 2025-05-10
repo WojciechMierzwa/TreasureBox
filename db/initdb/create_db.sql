@@ -88,3 +88,9 @@ CREATE TABLE app_user_episode (
     FOREIGN KEY (app_user_id) REFERENCES app_user(id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (episode_id) REFERENCES episode(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+INSERT INTO app_user (role, name, password, profile_picture, require_credentials)
+VALUES 
+    ('admin', 'admin', 'admin', 1, false)
+
+

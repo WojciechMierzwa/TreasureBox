@@ -10,5 +10,5 @@ public class TreasureBoxApplication {
 		SpringApplication.run(TreasureBoxApplication.class, args);
 	}
 
-	
+
 }
