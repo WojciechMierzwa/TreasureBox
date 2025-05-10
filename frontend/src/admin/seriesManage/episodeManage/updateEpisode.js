@@ -30,7 +30,6 @@ function UpdateEpisode() {
           console.log("Episode data received:", data);
           setEpisode(data);
           setName(data.name);
-          setSeasonNumber(data.seasonNumber);
           setEpisodeNumber(data.episodeNumber);
           setEpisodeLocation(data.episodeLocation);
           setHasCaptions(data.hasCaptions);
@@ -110,7 +109,6 @@ function UpdateEpisode() {
 
     const payload = {
       name,
-      seasonNumber: Number(seasonNumber),
       episodeNumber: Number(episodeNumber),
       episodeLocation,
       hasCaptions,
@@ -177,14 +175,6 @@ function UpdateEpisode() {
           className="w-full p-2 border border-gray-300 rounded"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          required
-        />
-        <input
-          type="number"
-          placeholder="Season Number"
-          className="w-full p-2 border border-gray-300 rounded"
-          value={seasonNumber}
-          onChange={(e) => setSeasonNumber(e.target.value)}
           required
         />
         <input

@@ -100,7 +100,7 @@ public class UserFilmController {
 
         UserFilm userFilm = optional.get();
         userFilm.setWatched(true);
-        UserFilm saved = userFilmRepository.save(userFilm);  
+        UserFilm saved = userFilmRepository.save(userFilm);
 
         return ResponseEntity.ok(Map.of("success", true, "message", "User-Film updated", "id", saved.getId()));
     }

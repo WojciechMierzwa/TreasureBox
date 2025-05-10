@@ -38,22 +38,50 @@ function MoviesUserList() {
   if (error) return <div className="p-8 text-red-500">Error: {error}</div>;
   if (userFilms.length === 0) return <div className="p-8">No movies found.</div>;
 
+  
+  const watchingFilms = userFilms.filter((userFilm) => !userFilm.watched);
+  const watchedFilms = userFilms.filter((userFilm) => userFilm.watched);
+
   return (
     <div className="flex flex-wrap justify-start items-start gap-4 p-8">
-      <h2 className="w-full text-xl font-bold mb-6">Movies Watching/Watched</h2>
-      {userFilms.map((userFilm) => (
-        <div
-          key={userFilm.id}
-          className="m-4 cursor-pointer hover:opacity-80 transition-opacity"
-          onClick={() => navigate(`/watch/movie?id=${userFilm.film.id}`)}
-        >
-          <Block
-            name={userFilm.film?.name || 'Unknown'}
-            genre={userFilm.film?.genre || 'Unknown'}
-            picture={userFilm.film?.picture}
-          />
-        </div>
-      ))}
+      <h2 className="w-full text-xl font-bold mb-6">Movies Watching</h2>
+      {watchingFilms.length === 0 ? (
+        <div className="p-8">No movies are currently being watched.</div>
+      ) : (
+        watchingFilms.map((userFilm) => (
+          <div
+            key={userFilm.id}
+            className="m-4 cursor-pointer hover:opacity-80 transition-opacity"
+            onClick={() => navigate(`/watch/movie?id=${userFilm.film.id}`)}
+          >
+            <Block
+              name={userFilm.film?.name || 'Unknown'}
+              genre={userFilm.film?.genre || 'Unknown'}
+              picture={userFilm.film?.picture}
+            />
+          </div>
+        ))
+      )}
+
+      {/* Sekcja "Movies Watched" */}
+      {watchedFilms.length > 0 && (
+        <>
+          <h2 className="w-full text-xl font-bold mb-6">Movies Watched</h2>
+          {watchedFilms.map((userFilm) => (
+            <div
+              key={userFilm.id}
+              className="m-4 cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={() => navigate(`/watch/movie?id=${userFilm.film.id}`)}
+            >
+              <Block
+                name={userFilm.film?.name || 'Unknown'}
+                genre={userFilm.film?.genre || 'Unknown'}
+                picture={userFilm.film?.picture}
+              />
+            </div>
+          ))}
+        </>
+      )}
     </div>
   );
 }

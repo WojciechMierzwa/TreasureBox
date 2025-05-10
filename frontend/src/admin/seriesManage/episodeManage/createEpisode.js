@@ -35,7 +35,6 @@ function CreateEpisode() {
 
     const payload = {
       name,
-      seasonNumber: Number(seasonNumber),
       episodeNumber: Number(episodeNumber),
       episodeLocation,
       hasCaptions,
@@ -65,14 +64,6 @@ function CreateEpisode() {
           className="w-full p-2 border border-gray-300 rounded"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          required
-        />
-        <input
-          type="number"
-          placeholder="Season Number"
-          className="w-full p-2 border border-gray-300 rounded"
-          value={seasonNumber}
-          onChange={(e) => setSeasonNumber(e.target.value)}
           required
         />
         <input

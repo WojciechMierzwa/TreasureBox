@@ -28,6 +28,7 @@ import ManageEpisodes from './admin/seriesManage/episodeManage/ManageEpisodes';
 import CreateSeries from './admin/seriesManage/CreateSeries';
 import UsersManager from './admin/userManage/UsersManager';
 import Contact from './user/pages/Contact';
+import Dashboard from './user/pages/manageAccount/Dashboard';
 
 function AppLayout() {
   const location = useLocation();
@@ -90,6 +91,7 @@ function AppContent() {
         <Route path="/MyList/:id" element={<MyList />} />
 
         <Route path="/Contact" element={<Contact />} />
+        <Route path="/Dashboard" element={<Dashboard />} />
       </Route>
 
       {/* 404 fallback */}
