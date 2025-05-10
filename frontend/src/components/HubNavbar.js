@@ -17,6 +17,16 @@ const HubNavbar = () => {
     localStorage.removeItem("username");
     navigate('/');
   };
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      handleSearch(); 
+    }
+  };
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      navigate(`/Search?query=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   const goToSettings = () => {
     navigate('/Settings');
@@ -39,6 +49,7 @@ const HubNavbar = () => {
               placeholder="Search..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleKeyPress}
             />
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">

@@ -107,15 +107,6 @@ function CreateFilm() {
               className="block w-full px-3 py-2 border border-gray-300 rounded-md"
             />
           </div>
-          <div className="mb-4">
-            <input
-              type="text"
-              placeholder="Captions Location"
-              value={captionsLocation}
-              onChange={(e) => setCaptionsLocation(e.target.value)}
-              className="block w-full px-3 py-2 border border-gray-300 rounded-md"
-            />
-          </div>
           <div className="flex items-center mb-4">
             <input
               id="hasCaptions"
@@ -128,6 +119,17 @@ function CreateFilm() {
               Has Captions
             </label>
           </div>
+          {hasCaptions && (
+          <div className="mb-4">
+            <input
+              type="text"
+              placeholder="Captions Location"
+              value={captionsLocation}
+              onChange={(e) => setCaptionsLocation(e.target.value)}
+              className="block w-full px-3 py-2 border border-gray-300 rounded-md"
+            />
+          </div>
+           )}
 
           <div className="space-y-3">
             <button
@@ -137,6 +139,7 @@ function CreateFilm() {
             >
               {isLoading ? 'Creating...' : 'Create Film'}
             </button>
+            
 
             <button
               type="button"

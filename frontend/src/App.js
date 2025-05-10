@@ -30,6 +30,7 @@ import UsersManager from './admin/userManage/UsersManager';
 import Contact from './user/pages/Contact';
 import Dashboard from './user/pages/manageAccount/Dashboard';
 import RequireAuth from './components/RequireAuth';
+import Search from './user/pages/Search';
 
 function AppLayout() {
   const location = useLocation();
@@ -209,6 +210,15 @@ function AppContent() {
         element={
           <RequireAuth allowedRoles={["user", "admin"]}>
             <Settings />
+          </RequireAuth>
+        }
+      />
+
+      <Route
+        path="/Search?"
+        element={
+          <RequireAuth allowedRoles={["user", "admin"]}>
+            <Search />
           </RequireAuth>
         }
       />
