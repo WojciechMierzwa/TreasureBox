@@ -51,25 +51,25 @@ function Video({ mode }) {
       const data = await res.json();
       
       const existingRecord = Array.isArray(data) 
-        ? data.find(item => {
-            if (mode === 'episode') {
-              setName(item.episode.name);
-              return item.episode?.id === parseInt(id);
-            } else {
-              setName(item.film.name);
-              return item.film?.id === parseInt(id);
-            }
-          })
-        : null;
-  
-      if (existingRecord) {
-    
-        setUserProgressId(existingRecord.id);
-        if (existingRecord.timeWatched) {
-          setSavedTime(parseFloat(existingRecord.timeWatched));
-        }
-        return; 
-      }
+  ? data.find(item => {
+      return mode === 'episode'
+        ? item.episode?.id === parseInt(id)
+        : item.film?.id === parseInt(id);
+    })
+  : null;
+
+if (existingRecord) {
+  if (mode === 'episode') {
+    setName(existingRecord.episode.name);
+  } else {
+    setName(existingRecord.film.name);
+  }
+  setUserProgressId(existingRecord.id);
+  if (existingRecord.timeWatched) {
+    setSavedTime(parseFloat(existingRecord.timeWatched));
+  }
+}
+
   
       
       const createEndpoint = mode === 'episode'

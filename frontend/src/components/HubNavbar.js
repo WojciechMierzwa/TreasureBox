@@ -11,6 +11,9 @@ const HubNavbar = () => {
   const signOut = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
+    localStorage.removeItem("profilePicture");
+    localStorage.removeItem("role");
+    localStorage.removeItem("username");
     localStorage.removeItem("username");
     navigate('/');
   };
