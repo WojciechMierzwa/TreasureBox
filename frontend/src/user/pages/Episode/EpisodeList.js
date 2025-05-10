@@ -6,11 +6,11 @@ function EpisodeList() {
   const [episodes, setEpisodes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS;
   useEffect(() => {
     const fetchEpisodes = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/episodes/tvshow/${tvShowId}`);
+        const response = await fetch(`${backendAddress}/api/episodes/tvshow/${tvShowId}`);
         if (!response.ok) {
           throw new Error('Wystąpił problem z pobieraniem danych');
         }
