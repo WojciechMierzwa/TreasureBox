@@ -128,6 +128,6 @@ docker-compose up --build
 
 ## ✍️ Authors
 
-Developed by [Wojciech Mierzwa](https://github.com/WojciechMierzwa/TreasureBox)
+Developed by [Wojciech Mierzwa](https://github.com/WojciechMierzwa)
 
 ---
